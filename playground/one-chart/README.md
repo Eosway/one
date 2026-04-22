@@ -1,5 +1,23 @@
-# Vue 3 + TypeScript + Vite
+# Playground one-chart
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+用于本地演示和实测 `@eosway/one-chart`。
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+## 启动
+
+```bash
+pnpm install
+pnpm --filter one-chart dev
+```
+
+默认会启动一个最小可运行页面，用来验证：
+
+- `OneChart` 组件真实渲染
+- 自定义 runtime 模块注册
+- `click` 事件绑定
+- `setOption` / `resize` / `dispatchAction` 等实例方法
+
+## 构建
+
+```bash
+pnpm --filter one-chart build
+```

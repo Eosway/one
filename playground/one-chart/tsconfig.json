@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "target": "ES2023",
     "module": "ESNext",
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
@@ -15,6 +16,10 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "noEmit": true,
+    "paths": {
+      "@eosway/one-chart": ["../../packages/one-chart/src/index.ts"],
+      "@eosway/one-chart/plugins": ["../../packages/one-chart/src/plugins.ts"]
+    },
 
     /* Linting */
     "strict": true,

@@ -37,10 +37,12 @@ export type OneChartInstance = EChartsType
  */
 export type OneChartEChartsNamespace = typeof import('echarts/core')
 
+type ExtractOneChartModule<T> = T extends Array<infer Module> ? Module : T
+
 /**
  * ECharts 按需注册模块类型。
  */
-export type OneChartModule = Parameters<OneChartEChartsNamespace['use']>[0] extends Array<infer Module> ? Module : never
+export type OneChartModule = ExtractOneChartModule<Parameters<OneChartEChartsNamespace['use']>[0]>
 
 /**
  * ECharts 事件处理函数类型。
