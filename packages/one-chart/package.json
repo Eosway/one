@@ -1,6 +1,6 @@
 {
   "name": "@eosway/one-chart",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Vue 3 runtime adapter for Apache ECharts.",
   "keywords": [
     "vue",
