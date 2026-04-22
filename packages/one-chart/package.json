@@ -1,0 +1,68 @@
+{
+  "name": "@eosway/one-chart",
+  "version": "0.0.1",
+  "description": "Vue 3 runtime adapter for Apache ECharts.",
+  "keywords": [
+    "vue",
+    "vue3",
+    "echarts",
+    "apache-echarts"
+  ],
+  "homepage": "https://www.npmjs.com/package/@eosway/one-chart",
+  "bugs": {
+    "url": "https://github.com/Eosway/one/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Eosway/one.git",
+    "directory": "packages/one-chart"
+  },
+  "license": "Apache-2.0",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./plugins": {
+      "types": "./dist/plugins.d.ts",
+      "import": "./dist/plugins.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "test": "vitest run",
+    "clean": "rimraf dist",
+    "log": "conventional-changelog -p angular --commit-path . -t one-chart@"
+  },
+  "devDependencies": {
+    "echarts": "^5.6.0",
+    "vue": "^3.5.32"
+  },
+  "peerDependencies": {
+    "echarts": ">=5.5.0",
+    "echarts-gl": ">=2.0.0",
+    "echarts-stat": ">=1.2.0",
+    "vue": ">=3.3.0"
+  },
+  "peerDependenciesMeta": {
+    "echarts-gl": {
+      "optional": true
+    },
+    "echarts-stat": {
+      "optional": true
+    }
+  },
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+  }
+}
