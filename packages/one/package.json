@@ -1,0 +1,75 @@
+{
+  "name": "@eosway/one",
+  "version": "0.0.1",
+  "description": "Aggregate entry for eosway one packages.",
+  "private": false,
+  "keywords": [
+    "eosway",
+    "vue",
+    "vue3",
+    "components",
+    "composables",
+    "aggregator"
+  ],
+  "homepage": "https://www.npmjs.com/package/@eosway/one",
+  "bugs": {
+    "url": "https://github.com/Eosway/one/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Eosway/one.git",
+    "directory": "packages/one"
+  },
+  "license": "Apache-2.0",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./chart": {
+      "types": "./dist/chart.d.ts",
+      "import": "./dist/chart.js"
+    },
+    "./chart/plugins": {
+      "types": "./dist/chart/plugins.d.ts",
+      "import": "./dist/chart/plugins.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "test": "vitest run",
+    "tsc": "vue-tsc --noEmit -p tsconfig.json",
+    "clean": "rimraf dist",
+    "log": "conventional-changelog -p angular --commit-path . -t one@"
+  },
+  "dependencies": {
+    "@eosway/one-chart": "workspace:^"
+  },
+  "peerDependencies": {
+    "echarts": ">=5.5.0",
+    "echarts-gl": ">=2.0.0",
+    "echarts-stat": ">=1.2.0",
+    "vue": ">=3.3.0"
+  },
+  "peerDependenciesMeta": {
+    "echarts-gl": {
+      "optional": true
+    },
+    "echarts-stat": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
+    "pnpm": ">=10.0.0"
+  }
+}
