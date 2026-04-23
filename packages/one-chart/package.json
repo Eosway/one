@@ -40,6 +40,7 @@
   "scripts": {
     "build": "vite build",
     "test": "vitest run",
+    "tsc": "vue-tsc --noEmit -p tsconfig.json",
     "clean": "rimraf dist",
     "log": "conventional-changelog -p angular --commit-path . -t one-chart@"
   },

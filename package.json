@@ -5,12 +5,13 @@
   "license": "Apache-2.0",
   "type": "module",
   "scripts": {
-    "build": "pnpm -r --filter ./packages/* run build",
-    "test": "pnpm -r --filter ./packages/* run test",
-    "clean": "pnpm -r --filter ./packages/* run clean",
+    "build": "pnpm -r --filter './packages/*' run build",
+    "test": "pnpm -r --filter './packages/*' run test",
+    "clean": "pnpm -r --filter './packages/*' run clean",
     "format": "prettier --write .",
     "lint": "eslint --fix .",
-    "tsc": "vue-tsc --noEmit -p tsconfig.json",
+    "tsc": "pnpm -r --filter './packages/*' run tsc",
+    "tsc:playground": "pnpm -r --filter './playground/*' run tsc",
     "prepare": "husky"
   },
   "devDependencies": {
