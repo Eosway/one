@@ -17,20 +17,20 @@ interface DemoViewItem {
 const views: DemoViewItem[] = [
   {
     key: 'one-chart',
-    label: '组件零配置',
-    summary: '直接 `<OneChart :option="option" />`，默认走内置完整 runtime。',
+    label: '组件接入',
+    summary: '直接使用 OneChart 组件，适合快速接入，实例生命周期由组件托管。',
     component: markRaw(OneChartComponentDemoView),
   },
   {
     key: 'use-one-chart',
-    label: 'Composable 零配置',
-    summary: '直接 `useOneChart(chartRef, { option })`，容器和实例生命周期自己掌控。',
+    label: 'Composable 接入',
+    summary: '使用 useOneChart 绑定容器与配置，适合自行管理图表实例。',
     component: markRaw(OneChartComposableDemoView),
   },
   {
     key: 'sales-chart',
-    label: '高级 Runtime',
-    summary: '显式 `createOneChartRuntime({ modules })`，保留按需注册与高级控制。',
+    label: 'Runtime 接入',
+    summary: '显式创建 runtime，适合按需注册模块或复用运行时。',
     component: markRaw(OneChartRuntimeDemoView),
   },
 ]
@@ -40,12 +40,12 @@ const activeView = computed(() => views.find((view) => view.key === activeViewKe
 </script>
 
 <template>
-  <main class="page-shell">
+  <main class="app-shell">
     <header class="app-header">
       <div class="app-copy">
         <p class="app-eyebrow">Eosway One Playground</p>
-        <h1 class="app-title">one-chart 三种接入方式演示</h1>
-        <p class="app-desc">这个 playground 按“组件零配置、composable 零配置、高级 runtime”三条路径组织，默认路径不再要求手动注册 ECharts modules。</p>
+        <h1 class="app-title">one-chart 接入方式演示</h1>
+        <p class="app-desc">同一份图表配置，分别用组件、Composable 和 Runtime 三种方式接入，便于按场景选择。</p>
       </div>
 
       <nav class="view-switcher" aria-label="演示方式切换">
@@ -62,62 +62,11 @@ const activeView = computed(() => views.find((view) => view.key === activeViewKe
       </nav>
     </header>
 
-    <component :is="activeView.component" />
+    <component :is="activeView.component" class="app-view" />
   </main>
 </template>
 
 <style>
-body {
-  margin: 0;
-  font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  background: radial-gradient(circle at top, rgba(15, 118, 110, 0.18), transparent 30%), linear-gradient(180deg, #f8fafc 0%, #eef6ff 100%);
-  color: #0f172a;
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-button,
-code {
-  font: inherit;
-}
-
-.page-shell {
-  min-height: 100vh;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 40px 20px 56px;
-}
-
-.app-header {
-  margin-bottom: 24px;
-}
-
-.app-eyebrow {
-  margin: 0 0 8px;
-  color: #0f766e;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.app-title {
-  margin: 0;
-  font-size: clamp(34px, 5vw, 54px);
-  line-height: 1.02;
-}
-
-.app-desc {
-  max-width: 780px;
-  margin: 12px 0 0;
-  color: #334155;
-  line-height: 1.7;
-}
-
 .view-switcher {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -166,10 +115,6 @@ code {
 }
 
 @media (max-width: 900px) {
-  .page-shell {
-    padding: 20px 14px 32px;
-  }
-
   .view-switcher {
     grid-template-columns: 1fr;
   }

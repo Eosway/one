@@ -111,7 +111,7 @@ const option = computed<OneChartOption>(() => ({
 const events: OneChartEventMap = {
   click(params: unknown) {
     const payload = params as { name?: string; value?: unknown }
-    emit('barClick', `点击 ${payload.name ?? '-'}: ${String(payload.value ?? '-')}`)
+    emit('barClick', `已点击 ${payload.name ?? '-'}，数值 ${String(payload.value ?? '-')}`)
   },
 }
 

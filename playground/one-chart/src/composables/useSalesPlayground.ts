@@ -7,8 +7,8 @@ export function useSalesPlayground(getChartControl: () => SalesChartControl | nu
   const loading = shallowRef(false)
   const readyCount = shallowRef(0)
   const lastAction = shallowRef('等待图表初始化')
-  const lastClick = shallowRef('尚未点击柱状图')
-  const modeSummary = shallowRef('默认内置 runtime，开箱即用')
+  const lastClick = shallowRef('尚未点击图表')
+  const modeSummary = shallowRef('使用内置运行时，开箱即用')
 
   const activePreset = computed(() => salesPresets[activePresetIndex.value])
   const runtimeSummary = computed(() => modeSummary.value)
@@ -20,7 +20,7 @@ export function useSalesPlayground(getChartControl: () => SalesChartControl | nu
 
   function toggleLoading(): void {
     loading.value = !loading.value
-    lastAction.value = loading.value ? '显示 loading' : '隐藏 loading'
+    lastAction.value = loading.value ? '已显示loading' : '已关闭loading'
   }
 
   function highlightPeak(): void {
@@ -32,12 +32,12 @@ export function useSalesPlayground(getChartControl: () => SalesChartControl | nu
 
   function rerenderChart(): void {
     getChartControl()?.rerender()
-    lastAction.value = '已手动执行 setOption + resize'
+    lastAction.value = '已手动刷新图表'
   }
 
   function handleReady(): void {
     readyCount.value += 1
-    lastAction.value = '图表实例初始化完成'
+    lastAction.value = '图表已完成初始化'
   }
 
   function setModeSummary(summary: string): void {
@@ -46,7 +46,7 @@ export function useSalesPlayground(getChartControl: () => SalesChartControl | nu
 
   function handleBarClick(summary: string): void {
     lastClick.value = summary
-    lastAction.value = '已收到 click 事件'
+    lastAction.value = '已更新点击结果'
   }
 
   return {

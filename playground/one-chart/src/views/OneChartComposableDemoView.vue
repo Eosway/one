@@ -21,253 +21,96 @@ const {
   handleBarClick,
 } = useSalesPlayground(() => chartRef.value)
 
-setModeSummary('默认内置 runtime，composable 只需要传容器 ref 和 option')
+setModeSummary('内置 runtime')
 </script>
 
 <template>
-  <section class="hero-panel">
-    <div class="hero-copy">
-      <p class="eyebrow">Mode 02</p>
-      <h1 class="hero-title">useOneChart composable 零配置模式</h1>
-      <p class="hero-desc">
-        直接使用
+  <section class="app-surface app-hero">
+    <div class="app-copy">
+      <p class="app-eyebrow">Mode 02</p>
+      <h1 class="app-hero-title">Composable 接入</h1>
+      <p class="app-hero-desc">
+        使用
         <code>useOneChart</code>
-        管理 DOM ref、实例生命周期和命令式调用，主路径是
+        把图表挂到指定容器，并保留命令式调用能力，常见写法是
         <code>useOneChart(chartRef, { option })</code>
         。
       </p>
     </div>
 
-    <div class="status-grid">
-      <article class="status-card">
-        <span class="status-label">当前数据集</span>
-        <strong class="status-value">{{ activePreset.label }}</strong>
+    <div class="app-status-grid">
+      <article class="app-status-card">
+        <span class="app-status-label">容器</span>
+        <strong class="app-status-value">手动绑定 DOM</strong>
       </article>
-      <article class="status-card">
-        <span class="status-label">Runtime</span>
-        <strong class="status-value">{{ runtimeSummary }}</strong>
+      <article class="app-status-card">
+        <span class="app-status-label">实例控制</span>
+        <strong class="app-status-value">通过返回的方法控制</strong>
       </article>
-      <article class="status-card">
-        <span class="status-label">Ready 次数</span>
-        <strong class="status-value">{{ readyCount }}</strong>
+      <article class="app-status-card">
+        <span class="app-status-label">Runtime</span>
+        <strong class="app-status-value">{{ runtimeSummary }}</strong>
+      </article>
+      <article class="app-status-card">
+        <span class="app-status-label">初始化次数</span>
+        <strong class="app-status-value">{{ readyCount }}</strong>
       </article>
     </div>
   </section>
 
-  <section class="demo-panel">
-    <header class="panel-header">
+  <section class="app-surface app-demo">
+    <header class="app-panel-header">
       <div>
-        <h2 class="panel-title">图表区</h2>
-        <p class="panel-subtitle">适合要把实例控制彻底留在自己组件内部，但又不想手动拼 runtime 的写法。</p>
+        <h2 class="app-panel-title">图表区</h2>
+        <p class="app-panel-subtitle">当你想保留默认运行时，又希望把容器、生命周期和实例操作掌握在自己组件里时，使用这一种。</p>
+        <p class="app-panel-meta">
+          <span class="app-panel-meta-label">当前数据集</span>
+          <strong class="app-panel-meta-value">{{ activePreset.label }}</strong>
+          <span>{{ activePreset.subtitle }}</span>
+        </p>
       </div>
 
-      <div class="actions">
-        <button class="action-button" type="button" @click="cyclePreset">切换数据</button>
-        <button class="action-button" type="button" @click="toggleLoading">
-          {{ loading ? '关闭 loading' : '显示 loading' }}
+      <div class="app-actions">
+        <button class="app-button" type="button" @click="cyclePreset">切换数据</button>
+        <button class="app-button" type="button" @click="toggleLoading">
+          {{ loading ? '关闭loading' : '显示loading' }}
         </button>
-        <button class="action-button" type="button" @click="highlightPeak">高亮峰值</button>
-        <button class="action-button" type="button" @click="rerenderChart">手动重绘</button>
+        <button class="app-button" type="button" @click="highlightPeak">高亮峰值</button>
+        <button class="app-button" type="button" @click="rerenderChart">手动重绘</button>
       </div>
     </header>
 
     <OneChartComposableDemo ref="chart" :preset="activePreset" :loading="loading" @ready="handleReady" @bar-click="handleBarClick" />
   </section>
 
-  <section class="info-grid">
-    <article class="info-card">
-      <h2 class="info-title">适用场景</h2>
-      <ul class="info-list">
-        <li>需要完全掌控图表容器和实例操作。</li>
-        <li>一个组件里要编排更复杂的生命周期逻辑。</li>
-        <li>后续想和自定义 DOM、动画、布局深度组合。</li>
+  <section class="app-info-grid">
+    <article class="app-surface app-info-card">
+      <h2 class="app-info-title">适用场景</h2>
+      <ul class="app-info-list">
+        <li>
+          需要主动调用
+          <code>setOption</code>
+          、
+          <code>resize</code>
+          或
+          <code>dispatchAction</code>
+          。
+        </li>
+        <li>图表要和自定义布局、动画或交互联动。</li>
+        <li>希望在当前组件中统一管理生命周期。</li>
       </ul>
     </article>
 
-    <article class="info-card">
-      <h2 class="info-title">最近状态</h2>
-      <p class="info-line">
+    <article class="app-surface app-info-card">
+      <h2 class="app-info-title">最近状态</h2>
+      <p class="app-info-line">
         <span>最近动作</span>
         {{ lastAction }}
       </p>
-      <p class="info-line">
+      <p class="app-info-line">
         <span>最近点击</span>
         {{ lastClick }}
       </p>
     </article>
   </section>
 </template>
-
-<style scoped>
-.hero-panel,
-.demo-panel,
-.info-card {
-  border: 1px solid rgba(148, 163, 184, 0.22);
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.86);
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
-  backdrop-filter: blur(14px);
-}
-
-.hero-panel {
-  padding: 28px;
-}
-
-.eyebrow {
-  margin: 0 0 8px;
-  color: #0f766e;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.hero-title {
-  margin: 0;
-  font-size: clamp(32px, 5vw, 52px);
-  line-height: 1.05;
-}
-
-.hero-desc {
-  max-width: 720px;
-  margin: 12px 0 0;
-  color: #334155;
-  line-height: 1.7;
-}
-
-.status-grid,
-.info-grid {
-  display: grid;
-  gap: 16px;
-  margin-top: 24px;
-}
-
-.status-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.status-card {
-  padding: 18px 20px;
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(241, 245, 249, 0.92));
-}
-
-.status-label {
-  display: block;
-  color: #64748b;
-  font-size: 13px;
-}
-
-.status-value {
-  display: block;
-  margin-top: 8px;
-  font-size: 18px;
-}
-
-.demo-panel {
-  margin-top: 24px;
-  padding: 24px;
-}
-
-.panel-header {
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.panel-title,
-.info-title {
-  margin: 0;
-  font-size: 22px;
-}
-
-.panel-subtitle {
-  margin: 8px 0 0;
-  color: #475569;
-}
-
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: flex-end;
-}
-
-.action-button {
-  padding: 10px 16px;
-  border: 0;
-  border-radius: 999px;
-  background: #0f172a;
-  color: #f8fafc;
-  font-weight: 600;
-  cursor: pointer;
-  transition:
-    transform 0.16s ease,
-    opacity 0.16s ease,
-    background-color 0.16s ease;
-}
-
-.action-button:hover {
-  background: #1d4ed8;
-  transform: translateY(-1px);
-}
-
-.info-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-top: 24px;
-}
-
-.info-card {
-  padding: 24px;
-}
-
-.info-list {
-  margin: 16px 0 0;
-  padding-left: 18px;
-  color: #334155;
-  line-height: 1.8;
-}
-
-.info-line {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin: 16px 0 0;
-  color: #0f172a;
-}
-
-.info-line span {
-  color: #64748b;
-  font-size: 13px;
-}
-
-@media (max-width: 900px) {
-  .status-grid,
-  .info-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .panel-header {
-    flex-direction: column;
-  }
-
-  .actions {
-    justify-content: flex-start;
-  }
-}
-
-@media (max-width: 640px) {
-  .hero-panel,
-  .demo-panel,
-  .info-card {
-    border-radius: 20px;
-    padding: 18px;
-  }
-
-  .action-button {
-    width: 100%;
-  }
-}
-</style>
