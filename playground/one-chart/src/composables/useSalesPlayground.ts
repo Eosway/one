@@ -8,10 +8,10 @@ export function useSalesPlayground(getChartControl: () => SalesChartControl | nu
   const readyCount = shallowRef(0)
   const lastAction = shallowRef('等待图表初始化')
   const lastClick = shallowRef('尚未点击柱状图')
-  const runtimeModuleCount = shallowRef(0)
+  const modeSummary = shallowRef('默认内置 runtime，开箱即用')
 
   const activePreset = computed(() => salesPresets[activePresetIndex.value])
-  const runtimeSummary = computed(() => `${runtimeModuleCount.value} 个模块已注册`)
+  const runtimeSummary = computed(() => modeSummary.value)
 
   function cyclePreset(): void {
     activePresetIndex.value = (activePresetIndex.value + 1) % salesPresets.length
@@ -40,8 +40,8 @@ export function useSalesPlayground(getChartControl: () => SalesChartControl | nu
     lastAction.value = '图表实例初始化完成'
   }
 
-  function handleRuntimeReady(moduleCount: number): void {
-    runtimeModuleCount.value = moduleCount
+  function setModeSummary(summary: string): void {
+    modeSummary.value = summary
   }
 
   function handleBarClick(summary: string): void {
@@ -61,7 +61,7 @@ export function useSalesPlayground(getChartControl: () => SalesChartControl | nu
     highlightPeak,
     rerenderChart,
     handleReady,
-    handleRuntimeReady,
+    setModeSummary,
     handleBarClick,
   }
 }

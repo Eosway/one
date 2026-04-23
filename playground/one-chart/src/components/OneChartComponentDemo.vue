@@ -1,19 +1,16 @@
 <script setup lang="ts">
-import { computed, onMounted, useTemplateRef } from 'vue'
-import { BarChart } from 'echarts/charts'
-import { GridComponent, TitleComponent, TooltipComponent } from 'echarts/components'
-import { CanvasRenderer } from 'echarts/renderers'
-import { OneChart, createOneChartRuntime } from '@eosway/one-chart'
+import { computed, useTemplateRef } from 'vue'
+import { OneChart } from '@eosway/one-chart'
 import type { OneChartEventMap, OneChartExpose, OneChartOption } from '@eosway/one-chart'
 import type { SalesChartControl, SalesPreset } from '../types/sales'
 
-interface OneChartBaseDemoProps {
+interface OneChartComponentDemoProps {
   preset: SalesPreset
   loading?: boolean
   height?: number | string
 }
 
-const props = withDefaults(defineProps<OneChartBaseDemoProps>(), {
+const props = withDefaults(defineProps<OneChartComponentDemoProps>(), {
   loading: false,
   height: 420,
 })
@@ -21,12 +18,7 @@ const props = withDefaults(defineProps<OneChartBaseDemoProps>(), {
 const emit = defineEmits<{
   barClick: [summary: string]
   ready: []
-  runtimeReady: [moduleCount: number]
 }>()
-
-const runtime = createOneChartRuntime({
-  modules: [BarChart, GridComponent, TitleComponent, TooltipComponent, CanvasRenderer],
-})
 
 const chartRef = useTemplateRef<OneChartExpose>('chart')
 
@@ -115,10 +107,6 @@ const events: OneChartEventMap = {
   },
 }
 
-onMounted(() => {
-  emit('runtimeReady', runtime.installedModules.size)
-})
-
 function highlightPeak(): void {
   chartRef.value?.dispatchAction({
     type: 'downplay',
@@ -143,5 +131,5 @@ defineExpose<SalesChartControl>({
 </script>
 
 <template>
-  <OneChart ref="chart" :runtime="runtime" :option="option" :loading="loading" :events="events" :height="height" @ready="emit('ready')" />
+  <OneChart ref="chart" :option="option" :loading="loading" :events="events" :height="height" @ready="emit('ready')" />
 </template>

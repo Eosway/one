@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useTemplateRef } from 'vue'
-import SalesChart from '../components/SalesChart.vue'
+import OneChartRuntimeDemo from '../components/OneChartRuntimeDemo.vue'
 import { useSalesPlayground } from '../composables/useSalesPlayground'
 import type { SalesChartControl } from '../types/sales'
 
@@ -16,21 +16,23 @@ const {
   toggleLoading,
   highlightPeak,
   rerenderChart,
+  setModeSummary,
   handleReady,
-  handleRuntimeReady,
   handleBarClick,
 } = useSalesPlayground(() => chartRef.value)
+
+setModeSummary('高级 runtime 模式，显式注册 5 个 ECharts modules')
 </script>
 
 <template>
   <section class="hero-panel">
     <div class="hero-copy">
-      <p class="eyebrow">Mode 02</p>
-      <h1 class="hero-title">SalesChart 业务封装方式</h1>
+      <p class="eyebrow">Mode 03</p>
+      <h1 class="hero-title">高级控制 / Runtime 模式</h1>
       <p class="hero-desc">
-        将图表实现沉淀成
-        <code>SalesChart</code>
-        领域组件，页面只关心业务数据和交互动作，更接近日常组件库使用方式。
+        显式创建
+        <code>createOneChartRuntime({ modules })</code>
+        并通过高级入口接入，适合要控制模块注册和 runtime 复用的场景。
       </p>
     </div>
 
@@ -54,7 +56,7 @@ const {
     <header class="panel-header">
       <div>
         <h2 class="panel-title">图表区</h2>
-        <p class="panel-subtitle">页面不再接触 ECharts option 细节，只消费业务组件能力。</p>
+        <p class="panel-subtitle">保留原有控制模式能力，便于按需注册 modules 和接入自定义 runtime 插件。</p>
       </div>
 
       <div class="actions">
@@ -67,16 +69,16 @@ const {
       </div>
     </header>
 
-    <SalesChart ref="chart" :preset="activePreset" :loading="loading" @ready="handleReady" @runtime-ready="handleRuntimeReady" @bar-click="handleBarClick" />
+    <OneChartRuntimeDemo ref="chart" :preset="activePreset" :loading="loading" @ready="handleReady" @bar-click="handleBarClick" />
   </section>
 
   <section class="info-grid">
     <article class="info-card">
       <h2 class="info-title">适用场景</h2>
       <ul class="info-list">
-        <li>团队已经明确“销量图”这类业务组件边界。</li>
-        <li>希望页面不直接接触 ECharts 配置对象。</li>
-        <li>需要逐步沉淀 `one-*` 风格业务组件。</li>
+        <li>需要按需注册 ECharts modules 以控制体积或能力边界。</li>
+        <li>希望复用 runtime，并安装自定义 plugin。</li>
+        <li>需要兼容旧调用或已有控制模式封装。</li>
       </ul>
     </article>
 

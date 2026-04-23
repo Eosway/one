@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useTemplateRef } from 'vue'
-import ComposableSalesChart from '../components/ComposableSalesChart.vue'
+import OneChartComposableDemo from '../components/OneChartComposableDemo.vue'
 import { useSalesPlayground } from '../composables/useSalesPlayground'
 import type { SalesChartControl } from '../types/sales'
 
@@ -16,21 +16,25 @@ const {
   toggleLoading,
   highlightPeak,
   rerenderChart,
+  setModeSummary,
   handleReady,
-  handleRuntimeReady,
   handleBarClick,
 } = useSalesPlayground(() => chartRef.value)
+
+setModeSummary('默认内置 runtime，composable 只需要传容器 ref 和 option')
 </script>
 
 <template>
   <section class="hero-panel">
     <div class="hero-copy">
-      <p class="eyebrow">Mode 03</p>
-      <h1 class="hero-title">useOneChart composable 方式</h1>
+      <p class="eyebrow">Mode 02</p>
+      <h1 class="hero-title">useOneChart composable 零配置模式</h1>
       <p class="hero-desc">
         直接使用
         <code>useOneChart</code>
-        管理 DOM ref、实例生命周期和命令式调用，适合需要更细控制的场景。
+        管理 DOM ref、实例生命周期和命令式调用，主路径是
+        <code>useOneChart(chartRef, { option })</code>
+        。
       </p>
     </div>
 
@@ -54,7 +58,7 @@ const {
     <header class="panel-header">
       <div>
         <h2 class="panel-title">图表区</h2>
-        <p class="panel-subtitle">适合要把实例控制彻底留在自己组件内部的写法。</p>
+        <p class="panel-subtitle">适合要把实例控制彻底留在自己组件内部，但又不想手动拼 runtime 的写法。</p>
       </div>
 
       <div class="actions">
@@ -67,13 +71,7 @@ const {
       </div>
     </header>
 
-    <ComposableSalesChart
-      ref="chart"
-      :preset="activePreset"
-      :loading="loading"
-      @ready="handleReady"
-      @runtime-ready="handleRuntimeReady"
-      @bar-click="handleBarClick" />
+    <OneChartComposableDemo ref="chart" :preset="activePreset" :loading="loading" @ready="handleReady" @bar-click="handleBarClick" />
   </section>
 
   <section class="info-grid">

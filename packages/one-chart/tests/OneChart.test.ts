@@ -1,6 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
-import * as echarts from 'echarts/core'
+import * as echarts from 'echarts'
 import OneChart from '../src/components/OneChart.vue'
 import { createMockChart } from './mockChart'
 
@@ -17,7 +17,6 @@ describe('OneChart', () => {
           series: [],
         },
         autoResize: false,
-        group: 'dashboard',
       },
       attachTo: document.body,
     })
@@ -26,7 +25,6 @@ describe('OneChart', () => {
 
     expect(echarts.init).toHaveBeenCalled()
     expect(chart.setOption).toHaveBeenCalled()
-    expect(chart.group).toBe('dashboard')
     expect(wrapper.emitted('ready')?.[0]?.[0]).toBe(chart)
 
     wrapper.vm.resize()

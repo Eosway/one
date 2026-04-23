@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { computed, onMounted, useTemplateRef } from 'vue'
+import { computed, useTemplateRef } from 'vue'
 import { BarChart } from 'echarts/charts'
 import { GridComponent, TitleComponent, TooltipComponent } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
-import { OneChart, createOneChartRuntime } from '@eosway/one-chart'
-import type { OneChartEventMap, OneChartExpose, OneChartOption } from '@eosway/one-chart'
+import { createOneChartRuntime, useOneChartRuntime } from '@eosway/one-chart'
+import type { OneChartEventMap, OneChartOption } from '@eosway/one-chart'
 import type { SalesChartControl, SalesPreset } from '../types/sales'
 
-interface SalesChartProps {
+interface OneChartRuntimeDemoProps {
   preset: SalesPreset
   loading?: boolean
   height?: number | string
 }
 
-const props = withDefaults(defineProps<SalesChartProps>(), {
+const props = withDefaults(defineProps<OneChartRuntimeDemoProps>(), {
   loading: false,
   height: 420,
 })
@@ -21,14 +21,14 @@ const props = withDefaults(defineProps<SalesChartProps>(), {
 const emit = defineEmits<{
   barClick: [summary: string]
   ready: []
-  runtimeReady: [moduleCount: number]
 }>()
 
 const runtime = createOneChartRuntime({
   modules: [BarChart, GridComponent, TitleComponent, TooltipComponent, CanvasRenderer],
 })
 
-const chartRef = useTemplateRef<OneChartExpose>('chart')
+const chartRef = useTemplateRef<HTMLElement>('chart')
+const elementRef = computed(() => chartRef.value ?? undefined)
 
 const peakIndex = computed(() => {
   const max = Math.max(...props.preset.values)
@@ -109,22 +109,26 @@ const option = computed<OneChartOption>(() => ({
 }))
 
 const events: OneChartEventMap = {
-  click(params) {
+  click(params: unknown) {
     const payload = params as { name?: string; value?: unknown }
     emit('barClick', `点击 ${payload.name ?? '-'}: ${String(payload.value ?? '-')}`)
   },
 }
 
-onMounted(() => {
-  emit('runtimeReady', runtime.installedModules.size)
-})
+const chart = useOneChartRuntime(elementRef, () => ({
+  runtime,
+  option: option.value,
+  loading: props.loading,
+  events,
+  onReady: () => emit('ready'),
+}))
 
 function highlightPeak(): void {
-  chartRef.value?.dispatchAction({
+  chart.dispatchAction({
     type: 'downplay',
     seriesIndex: 0,
   })
-  chartRef.value?.dispatchAction({
+  chart.dispatchAction({
     type: 'highlight',
     seriesIndex: 0,
     dataIndex: peakIndex.value,
@@ -132,8 +136,8 @@ function highlightPeak(): void {
 }
 
 function rerender(): void {
-  chartRef.value?.setOption(option.value, { notMerge: true })
-  chartRef.value?.resize()
+  chart.setOption(option.value, { notMerge: true })
+  chart.resize()
 }
 
 defineExpose<SalesChartControl>({
@@ -143,5 +147,12 @@ defineExpose<SalesChartControl>({
 </script>
 
 <template>
-  <OneChart ref="chart" :runtime="runtime" :option="option" :loading="loading" :events="events" :height="height" @ready="emit('ready')" />
+  <div ref="chart" class="chart-host" :style="{ minHeight: typeof height === 'number' ? `${height}px` : height }" />
 </template>
+
+<style scoped>
+.chart-host {
+  width: 100%;
+  min-height: 420px;
+}
+</style>

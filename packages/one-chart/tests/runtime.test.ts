@@ -1,11 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import * as echartsFull from 'echarts'
 import * as echarts from 'echarts/core'
-import { createOneChartRuntime } from '../src/runtime/createOneChartRuntime'
+import { createDefaultOneChartRuntime, createOneChartRuntime } from '../src/runtime/createOneChartRuntime'
 import { defineOneChartPlugin } from '../src/runtime/defineOneChartPlugin'
 
 describe('createOneChartRuntime', () => {
   beforeEach(() => {
     vi.mocked(echarts.use).mockClear()
+    vi.mocked(echartsFull.use).mockClear()
   })
 
   it('registers modules once by reference', () => {
@@ -44,5 +46,14 @@ describe('createOneChartRuntime', () => {
 
     await expect(runtime.installPlugins([plugin])).rejects.toThrow(error)
     expect(runtime.installedPlugins.has('broken')).toBe(false)
+  })
+
+  it('creates a default runtime backed by full echarts namespace', () => {
+    const runtime = createDefaultOneChartRuntime()
+
+    runtime.useModules([{} as never])
+
+    expect(runtime.echarts).toBe(echartsFull)
+    expect(echartsFull.use).toHaveBeenCalledTimes(1)
   })
 })

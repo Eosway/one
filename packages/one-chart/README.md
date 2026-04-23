@@ -1,20 +1,22 @@
 # @eosway/one-chart
 
-> Vue 3 component, composables and runtime adapter for Apache ECharts.
+> Vue 3 component and composables adapter for Apache ECharts.
 
-`@eosway/one-chart` 不是业务图表组件库，而是一个通用的 ECharts 实例管理层，用于解决 Vue 生命周期内的图表初始化、更新、销毁、resize、事件绑定和插件扩展问题。
+`@eosway/one-chart` 提供两层 API：
+
+- 默认主路径：非控制模式，零配置可用
+- 高级路径：控制模式，保留 runtime / modules / plugin 安装能力
 
 ## 特性
 
-- `OneChart` 组件
-- `useOneChart` composable
-- `createOneChartRuntime` runtime adapter
-- `defineOneChartPlugin` 插件定义
+- `OneChart` 组件零配置模式
+- `useOneChart(chartRef, { option })` composable 零配置模式
+- `plugins` 扩展模式
+- `createOneChartRuntime()` 高级 runtime 模式
 - `ResizeObserver` 自动 resize
 - ECharts 事件绑定与解绑
-- 组件 expose / composable 实例方法封装
-- 仅支持 ESM
 - `echarts-gl` / `echarts-stat` 通过可选插件入口延迟加载，不进入主包
+- 仅支持 ESM
 
 ## 兼容性
 
@@ -28,16 +30,22 @@
 pnpm add vue echarts @eosway/one-chart
 ```
 
-如果需要使用可选扩展，再单独安装：
+如果需要使用可选扩展，再单独安装对应依赖：
 
 ```bash
 pnpm add echarts-gl
 pnpm add echarts-stat
 ```
 
-## 快速开始
+## 组件零配置模式
 
-### 组件用法
+默认组件模式直接使用内置完整 ECharts runtime，业务方不需要关心：
+
+- `runtime`
+- `modules`
+- `createOneChartRuntime()`
+
+`option` 直接使用原生 ECharts option。
 
 ```vue
 <script setup lang="ts">
@@ -52,118 +60,23 @@ const option = {
 function handleClick(params: unknown) {
   console.log(params)
 }
-
-function handleReady() {
-  console.log('ready')
-}
 </script>
 
 <template>
-  <OneChart :option="option" :width="640" :height="320" auto-resize :events="{ click: handleClick }" @ready="handleReady" />
+  <OneChart :option="option" :height="320" :events="{ click: handleClick }" />
 </template>
 ```
 
-### `useOneChart` composable 用法
+### `OneChart` 默认 Props
 
-```ts
-import { useOneChart } from '@eosway/one-chart'
-
-const option = {
-  xAxis: { type: 'category', data: ['A', 'B', 'C'] },
-  yAxis: { type: 'value' },
-  series: [{ type: 'bar', data: [12, 20, 15] }],
-}
-
-const { elRef, chart, ready, error, setOption, resize, clear, dispose, dispatchAction, showLoading, hideLoading, getInstance } = useOneChart({
-  option,
-  autoResize: true,
-  width: 640,
-  height: 320,
-  events: {
-    click(params) {
-      console.log(params)
-    },
-  },
-})
-```
-
-```vue
-<template>
-  <div ref="elRef" />
-</template>
-```
-
-### `createOneChartRuntime` 用法
-
-```ts
-import { createOneChartRuntime } from '@eosway/one-chart'
-import { BarChart, LineChart } from 'echarts/charts'
-import { GridComponent, TooltipComponent } from 'echarts/components'
-import { CanvasRenderer } from 'echarts/renderers'
-
-const runtime = createOneChartRuntime({
-  modules: [BarChart, LineChart, GridComponent, TooltipComponent, CanvasRenderer],
-})
-```
-
-你可以将该 runtime 传给组件或 composable：
-
-```ts
-useOneChart({
-  runtime,
-  option,
-})
-```
-
-```vue
-<template>
-  <OneChart :runtime="runtime" :option="option" />
-</template>
-```
-
-### 插件定义
-
-```ts
-import { defineOneChartPlugin } from '@eosway/one-chart'
-
-export const customPlugin = defineOneChartPlugin({
-  name: 'custom-plugin',
-  async install(runtime) {
-    console.log(runtime.echarts)
-  },
-})
-```
-
-## 可选插件入口
-
-```ts
-import { glPlugin, statPlugin } from '@eosway/one-chart/plugins'
-```
-
-这两个插件只会在实际安装时动态导入：
-
-- `glPlugin` -> `echarts-gl`
-- `statPlugin` -> `echarts-stat`
-
-主入口不会静态打入这两个扩展。
-
-## API 概览
-
-### `OneChart` Props
-
-- `runtime?: OneChartRuntime`
 - `option?: OneChartOption`
+- `loading?: boolean | OneChartLoadingOptions`
 - `theme?: OneChartTheme`
-- `initOptions?: OneChartInitOptions`
-- `updateOptions?: OneChartUpdateOptions`
 - `autoResize?: boolean`
-- `manualUpdate?: boolean`
 - `events?: OneChartEventMap`
-- `width?: OneChartSize`
-- `height?: OneChartSize`
+- `width?: string | number`
+- `height?: string | number`
 - `plugins?: OneChartPlugin[]`
-- `loading?: OneChartLoading`
-- `group?: string`
 
 ### `OneChart` Emits
 
@@ -171,20 +84,57 @@ import { glPlugin, statPlugin } from '@eosway/one-chart/plugins'
 - `error(error)`
 - `disposed()`
 
-### `OneChart` Expose
+## composable 零配置模式
 
-- `getInstance()`
-- `setOption(option, updateOptions?)`
-- `resize(options?)`
-- `clear()`
-- `dispose()`
-- `dispatchAction(payload)`
-- `showLoading(type?, options?)`
-- `hideLoading()`
+默认 composable 主路径为：
+
+```ts
+useOneChart(chartRef, { option })
+```
+
+第一个参数是容器 ref，必传；第二个参数为配置对象。
+
+```vue
+<script setup lang="ts">
+import { useTemplateRef } from 'vue'
+import { useOneChart } from '@eosway/one-chart'
+
+const chartRef = useTemplateRef<HTMLElement>('chart')
+
+const option = {
+  tooltip: { trigger: 'axis' },
+  xAxis: { type: 'category', data: ['Mon', 'Tue', 'Wed'] },
+  yAxis: { type: 'value' },
+  series: [{ type: 'line', data: [15, 23, 21] }],
+}
+
+useOneChart(chartRef, {
+  option,
+  onReady(chart) {
+    console.log(chart)
+  },
+})
+</script>
+
+<template>
+  <div ref="chart" style="width: 100%; height: 320px;" />
+</template>
+```
+
+### `useOneChart()` 默认参数
+
+- `option?: OneChartOption`
+- `loading?: boolean | OneChartLoadingOptions`
+- `theme?: OneChartTheme`
+- `autoResize?: boolean`
+- `events?: OneChartEventMap`
+- `plugins?: OneChartPlugin[]`
+- `onReady?: (chart) => void`
+- `onError?: (error) => void`
+- `onDisposed?: () => void`
 
 ### `useOneChart()` 返回值
 
-- `elRef`
 - `chart`
 - `ready`
 - `error`
@@ -197,37 +147,105 @@ import { glPlugin, statPlugin } from '@eosway/one-chart/plugins'
 - `showLoading(type?, options?)`
 - `hideLoading()`
 
+## plugins 扩展模式
+
+默认非控制模式也支持 `plugins` 扩展。
+
+插件从 `@eosway/one-chart/plugins` 导入，调用形式统一为工厂函数：
+
+```ts
+import { glPlugin, statPlugin } from '@eosway/one-chart/plugins'
+```
+
+```vue
+<template>
+  <OneChart :option="option" :plugins="[glPlugin(), statPlugin()]" />
+</template>
+```
+
+```ts
+useOneChart(chartRef, {
+  option,
+  plugins: [glPlugin(), statPlugin()],
+})
+```
+
+说明：
+
+- `glPlugin()` 会动态导入 `echarts-gl`
+- `statPlugin()` 会动态导入 `echarts-stat`
+- 业务方仍需自行安装对应外部依赖
+
+## 高级 runtime 模式
+
+`runtime` 是高级能力，不是默认用法。
+
+如果你需要按需注册 modules、复用 runtime 或安装自定义 plugin，可以继续使用：
+
+```ts
+import { createOneChartRuntime } from '@eosway/one-chart'
+import { BarChart, LineChart } from 'echarts/charts'
+import { GridComponent, TooltipComponent } from 'echarts/components'
+import { CanvasRenderer } from 'echarts/renderers'
+
+const runtime = createOneChartRuntime({
+  modules: [BarChart, LineChart, GridComponent, TooltipComponent, CanvasRenderer],
+})
+```
+
+高级控制模式 composable：
+
+```ts
+import { useOneChartRuntime } from '@eosway/one-chart'
+
+useOneChartRuntime(chartRef, {
+  runtime,
+  option,
+  manualUpdate: true,
+})
+```
+
+## 自定义插件
+
+```ts
+import { defineOneChartPlugin } from '@eosway/one-chart'
+
+export const customPlugin = defineOneChartPlugin({
+  name: 'custom-plugin',
+  async install(runtime) {
+    console.log(runtime.echarts)
+  },
+})
+```
+
 ## 设计约束
 
+- 默认主路径基于完整 `echarts` 命名空间，常规图表开箱即用
 - `option` 可为空；为空时只初始化实例，不自动执行 `setOption`
-- `manualUpdate=true` 时不自动监听 `option`
-- `setOption` 默认不会先 `clear`
-- `theme` / `initOptions` 变化会触发实例重建
+- `theme` 变化会触发实例重建
 - `events` 变化会先解绑旧事件，再绑定新事件
 - `autoResize` 依赖 `ResizeObserver`；无该 API 时自动跳过
-- SSR 环境下不会在模块顶层访问 `window` / `ResizeObserver`
 - 异步插件安装期间如果组件已卸载，旧初始化流程不会继续创建实例
 
 ## 注意事项
 
 ### 容器尺寸
 
-`OneChart` 不再依赖单独 CSS 文件，尺寸通过 `width` / `height` props 控制。
+`OneChart` 通过 `width` / `height` props 控制尺寸。
 
 - `number` 会自动转为 `px`
 - `string` 原样透传给内联样式
 - 默认值均为 `100%`
 
-例如：
+### 高级模式兼容
 
-```vue
-<OneChart :width="320" height="240px" />
-<OneChart width="100%" height="50vh" />
-```
+如果你仍然需要这些高级参数，请使用 `useOneChartRuntime(...)`：
 
-### 最小运行前提
-
-ECharts 采用按需注册模型。若你使用 `createOneChartRuntime()`，请确保已注册对应图表、组件和 renderer；否则底层 ECharts 初始化或渲染会失败。
+- `runtime`
+- `initOptions`
+- `manualUpdate`
+- 初始化级 `updateOptions`
+- `group`
 
 ## License
 

@@ -1,6 +1,14 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, shallowRef, toValue, watch, type MaybeRefOrGetter, type ShallowRef } from 'vue'
-import { createOneChartRuntime } from '../runtime/createOneChartRuntime'
-import type { OneChartInitOptions, OneChartInstance, OneChartOption, OneChartTheme, OneChartUpdateOptions, UseOneChartOptions } from '../types/public'
+import { createDefaultOneChartRuntime } from '../runtime/createOneChartRuntime'
+import type {
+  OneChartInitOptions,
+  OneChartInstance,
+  OneChartOption,
+  OneChartTheme,
+  OneChartUpdateOptions,
+  UseOneChartRuntimeOptions,
+  UseOneChartOptions,
+} from '../types/public'
 import { useOneChartEvents } from './useOneChartEvents'
 import { useOneChartResize } from './useOneChartResize'
 
@@ -70,19 +78,25 @@ export interface UseOneChartReturn {
 }
 
 /**
- * `useOneChart()` 支持的输入形式。
+ * `useOneChart()` 新签名支持的配置形式。
  */
 export type UseOneChartInput = MaybeRefOrGetter<UseOneChartOptions>
 
-const defaultRuntime = createOneChartRuntime()
+const defaultRuntime = createDefaultOneChartRuntime()
 
 /**
  * 在 Vue 生命周期内管理 ECharts 实例。
  *
  * 负责初始化、更新、销毁、事件绑定、自动 resize 和 expose 方法封装。
  */
-export function useOneChart(options: UseOneChartInput = {}): UseOneChartReturn {
-  const elRef = shallowRef<HTMLElement>()
+export function useOneChart(elRef: MaybeRefOrGetter<HTMLElement | undefined>, options: UseOneChartInput = {}): UseOneChartReturn {
+  return useOneChartCore(computedElementRef(elRef), options)
+}
+
+export function useOneChartCore(
+  elRef: ShallowRef<HTMLElement | undefined>,
+  options: MaybeRefOrGetter<UseOneChartOptions & UseOneChartRuntimeOptions> = {}
+): UseOneChartReturn {
   const chart = shallowRef<OneChartInstance>()
   const ready = shallowRef(false)
   const error = shallowRef<unknown>()
@@ -104,6 +118,21 @@ export function useOneChart(options: UseOneChartInput = {}): UseOneChartReturn {
   onBeforeUnmount(() => {
     dispose()
   })
+
+  watch(
+    () => elRef.value,
+    (currentEl, previousEl) => {
+      if (disposed || currentEl === previousEl) {
+        return
+      }
+
+      if (!currentEl && !chart.value) {
+        return
+      }
+
+      void rebuild()
+    }
+  )
 
   watch(
     () => toValue(options).option,
@@ -292,4 +321,18 @@ export function useOneChart(options: UseOneChartInput = {}): UseOneChartReturn {
     showLoading,
     hideLoading,
   }
+}
+
+function computedElementRef(target: MaybeRefOrGetter<HTMLElement | undefined>): ShallowRef<HTMLElement | undefined> {
+  const elRef = shallowRef<HTMLElement>()
+
+  watch(
+    () => toValue(target),
+    (value) => {
+      elRef.value = value
+    },
+    { immediate: true }
+  )
+
+  return elRef
 }

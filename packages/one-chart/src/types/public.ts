@@ -134,14 +134,9 @@ export interface OneChartPlugin {
 }
 
 /**
- * `useOneChart()` 输入参数。
+ * 默认公开的 `OneChart` / `useOneChart()` 配置。
  */
-export interface UseOneChartOptions {
-  /**
-   * 自定义 runtime。
-   */
-  runtime?: OneChartRuntime
-
+export interface OneChartBaseOptions {
   /**
    * 初始化后自动应用的 option。
    */
@@ -153,39 +148,14 @@ export interface UseOneChartOptions {
   theme?: OneChartTheme
 
   /**
-   * 初始化参数；变更后会重建实例。
-   */
-  initOptions?: OneChartInitOptions
-
-  /**
-   * 自动或手动 `setOption` 时使用的更新参数。
-   */
-  updateOptions?: OneChartUpdateOptions
-
-  /**
    * 是否启用自动 resize。
    */
   autoResize?: boolean
 
   /**
-   * 是否禁用对 `option` 的自动监听更新。
-   */
-  manualUpdate?: boolean
-
-  /**
    * ECharts 事件映射。
    */
   events?: OneChartEventMap
-
-  /**
-   * 图表容器宽度。
-   */
-  width?: OneChartSize
-
-  /**
-   * 图表容器高度。
-   */
-  height?: OneChartSize
 
   /**
    * 实例初始化前需要安装的插件列表。
@@ -196,12 +166,12 @@ export interface UseOneChartOptions {
    * loading 状态。
    */
   loading?: OneChartLoading
+}
 
-  /**
-   * 图表分组名。
-   */
-  group?: string
-
+/**
+ * `useOneChart()` 默认公开输入参数。
+ */
+export interface UseOneChartOptions extends OneChartBaseOptions {
   /**
    * 图表初始化成功回调。
    */
@@ -216,6 +186,39 @@ export interface UseOneChartOptions {
    * 实例销毁后回调。
    */
   onDisposed?: () => void
+}
+
+/**
+ * 高级控制模式下的额外参数。
+ *
+ * 这些参数主要用于兼容旧调用或显式 runtime 场景，
+ * 不属于默认主路径。
+ */
+export interface UseOneChartRuntimeOptions {
+  /**
+   * 自定义 runtime。
+   */
+  runtime?: OneChartRuntime
+
+  /**
+   * 初始化参数；变更后会重建实例。
+   */
+  initOptions?: OneChartInitOptions
+
+  /**
+   * 自动或手动 `setOption` 时使用的更新参数。
+   */
+  updateOptions?: OneChartUpdateOptions
+
+  /**
+   * 是否禁用对 `option` 的自动监听更新。
+   */
+  manualUpdate?: boolean
+
+  /**
+   * 图表分组名。
+   */
+  group?: string
 }
 
 /**
@@ -264,17 +267,9 @@ export interface OneChartExpose {
 }
 
 /**
- * `OneChart` 组件公开 props。
+ * `OneChart` 默认公开 props。
  */
-export interface OneChartProps {
-  /**
-   * 自定义 runtime。
-   *
-   * 不传时使用默认 runtime；传入时可复用外部通过
-   * `createOneChartRuntime()` 创建并预注册过 modules/plugins 的 runtime。
-   */
-  runtime?: OneChartRuntime
-
+export interface OneChartProps extends OneChartBaseOptions {
   /**
    * ECharts option。
    *
@@ -290,41 +285,6 @@ export interface OneChartProps {
   theme?: OneChartTheme
 
   /**
-   * ECharts 初始化参数。
-   *
-   * 变更后会重建实例。
-   */
-  initOptions?: OneChartInitOptions
-
-  /**
-   * `setOption` 更新参数。
-   *
-   * 仅影响下一次自动或手动 `setOption` 调用。
-   */
-  updateOptions?: OneChartUpdateOptions
-
-  /**
-   * 是否启用基于 `ResizeObserver` 的自动 resize。
-   *
-   * 默认为 `true`。SSR 或运行环境不支持 `ResizeObserver` 时会自动跳过。
-   */
-  autoResize?: boolean
-
-  /**
-   * 是否禁用对 `option` 的自动监听更新。
-   *
-   * 默认为 `false`。启用后需要手动调用 expose/composable 返回的 `setOption`。
-   */
-  manualUpdate?: boolean
-
-  /**
-   * ECharts 事件映射。
-   *
-   * 支持单个 handler 或 handler 数组；变化时会先解绑旧事件再绑定新事件。
-   */
-  events?: OneChartEventMap
-
-  /**
    * 图表容器宽度。
    *
    * 默认值为 `100%`。`number` 会被解释为像素值。
@@ -337,25 +297,8 @@ export interface OneChartProps {
    * 默认值为 `100%`。`number` 会被解释为像素值。
    */
   height?: OneChartSize
-
-  /**
-   * 当前图表实例初始化前需要安装的插件列表。
-   */
-  plugins?: OneChartPlugin[]
-
-  /**
-   * loading 状态。
-   *
-   * `true` 表示使用默认 loading；
-   * 对象形式可传入 `type` 与 `options`；
-   * falsy 值会调用 `hideLoading()`。
-   */
-  loading?: OneChartLoading
-
-  /**
-   * 图表分组名。
-   *
-   * 赋值到 `chart.group`，用于 `echarts.connect` 等联动场景。
-   */
-  group?: string
 }
+
+/**
+ * `OneChart` 高级兼容组件 props。
+ */

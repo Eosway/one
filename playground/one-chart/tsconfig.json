@@ -1,34 +1,10 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "target": "ES2023",
-    "module": "ESNext",
-    "lib": ["ES2023", "DOM", "DOM.Iterable"],
-    "moduleResolution": "bundler",
-    "esModuleInterop": true,
-    "allowJs": true,
-    "jsx": "preserve",
-    "jsxImportSource": "vue",
-
-    /* Bundler mode */
-    "allowImportingTsExtensions": true,
-    "moduleDetection": "force",
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "noEmit": true,
     "paths": {
       "@eosway/one-chart": ["../../packages/one-chart/src/index.ts"],
       "@eosway/one-chart/plugins": ["../../packages/one-chart/src/plugins.ts"]
-    },
-
-    /* Linting */
-    "strict": true,
-    "verbatimModuleSyntax": true,
-    "noUncheckedSideEffectImports": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "erasableSyntaxOnly": true,
-    "noFallthroughCasesInSwitch": true
+    }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "vite.config.ts"],
   "exclude": ["dist"]

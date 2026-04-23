@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, markRaw, shallowRef } from 'vue'
 import type { Component } from 'vue'
-import OneChartComponentView from './views/OneChartComponentView.vue'
-import SalesChartView from './views/SalesChartView.vue'
-import UseOneChartView from './views/UseOneChartView.vue'
+import OneChartComponentDemoView from './views/OneChartComponentDemoView.vue'
+import OneChartComposableDemoView from './views/OneChartComposableDemoView.vue'
+import OneChartRuntimeDemoView from './views/OneChartRuntimeDemoView.vue'
 
-type DemoViewKey = 'one-chart' | 'sales-chart' | 'use-one-chart'
+type DemoViewKey = 'one-chart' | 'use-one-chart' | 'sales-chart'
 
 interface DemoViewItem {
   key: DemoViewKey
@@ -17,21 +17,21 @@ interface DemoViewItem {
 const views: DemoViewItem[] = [
   {
     key: 'one-chart',
-    label: 'OneChart 组件',
-    summary: '直接基于组件 props / events 接入，作为最基础的使用入口。',
-    component: markRaw(OneChartComponentView),
-  },
-  {
-    key: 'sales-chart',
-    label: 'SalesChart 封装',
-    summary: '沉淀成业务组件后，页面只关心数据和动作，不再接触图表细节。',
-    component: markRaw(SalesChartView),
+    label: '组件零配置',
+    summary: '直接 `<OneChart :option="option" />`，默认走内置完整 runtime。',
+    component: markRaw(OneChartComponentDemoView),
   },
   {
     key: 'use-one-chart',
-    label: 'useOneChart composable',
-    summary: '将实例生命周期收在自定义组件内部，保留更强的控制能力。',
-    component: markRaw(UseOneChartView),
+    label: 'Composable 零配置',
+    summary: '直接 `useOneChart(chartRef, { option })`，容器和实例生命周期自己掌控。',
+    component: markRaw(OneChartComposableDemoView),
+  },
+  {
+    key: 'sales-chart',
+    label: '高级 Runtime',
+    summary: '显式 `createOneChartRuntime({ modules })`，保留按需注册与高级控制。',
+    component: markRaw(OneChartRuntimeDemoView),
   },
 ]
 
@@ -45,7 +45,7 @@ const activeView = computed(() => views.find((view) => view.key === activeViewKe
       <div class="app-copy">
         <p class="app-eyebrow">Eosway One Playground</p>
         <h1 class="app-title">one-chart 三种接入方式演示</h1>
-        <p class="app-desc">这个 playground 按“基础组件、业务封装、composable 控制”三条路径组织，方便同时演示 API 设计与真实使用方式。</p>
+        <p class="app-desc">这个 playground 按“组件零配置、composable 零配置、高级 runtime”三条路径组织，默认路径不再要求手动注册 ECharts modules。</p>
       </div>
 
       <nav class="view-switcher" aria-label="演示方式切换">

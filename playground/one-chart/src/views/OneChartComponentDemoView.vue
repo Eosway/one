@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useTemplateRef } from 'vue'
-import OneChartBaseDemo from '../components/OneChartBaseDemo.vue'
+import OneChartComponentDemo from '../components/OneChartComponentDemo.vue'
 import { useSalesPlayground } from '../composables/useSalesPlayground'
 import type { SalesChartControl } from '../types/sales'
 
@@ -16,21 +16,25 @@ const {
   toggleLoading,
   highlightPeak,
   rerenderChart,
+  setModeSummary,
   handleReady,
-  handleRuntimeReady,
   handleBarClick,
 } = useSalesPlayground(() => chartRef.value)
+
+setModeSummary('默认内置 runtime，常规图表零配置可用')
 </script>
 
 <template>
   <section class="hero-panel">
     <div class="hero-copy">
       <p class="eyebrow">Mode 01</p>
-      <h1 class="hero-title">OneChart 组件方式</h1>
+      <h1 class="hero-title">OneChart 组件零配置模式</h1>
       <p class="hero-desc">
         直接基于
         <code>OneChart</code>
-        组件绑定 runtime、option、events，适合快速接入和常规页面开发。
+        组件绑定
+        <code>option</code>
+        、loading 和 events，适合快速接入和常规页面开发。
       </p>
     </div>
 
@@ -54,7 +58,7 @@ const {
     <header class="panel-header">
       <div>
         <h2 class="panel-title">图表区</h2>
-        <p class="panel-subtitle">最接近库原生用法，适合作为使用入口示例。</p>
+        <p class="panel-subtitle">默认示例主路径，用户不需要关心 runtime、modules 和 createOneChartRuntime。</p>
       </div>
 
       <div class="actions">
@@ -67,13 +71,7 @@ const {
       </div>
     </header>
 
-    <OneChartBaseDemo
-      ref="chart"
-      :preset="activePreset"
-      :loading="loading"
-      @ready="handleReady"
-      @runtime-ready="handleRuntimeReady"
-      @bar-click="handleBarClick" />
+    <OneChartComponentDemo ref="chart" :preset="activePreset" :loading="loading" @ready="handleReady" @bar-click="handleBarClick" />
   </section>
 
   <section class="info-grid">
@@ -82,8 +80,23 @@ const {
       <ul class="info-list">
         <li>页面里只需要一层轻量图表封装。</li>
         <li>希望直接使用 `OneChart` 对外 props 和 events。</li>
-        <li>作为库文档或模板页的首选示例。</li>
+        <li>作为库文档和业务模板页的首选示例。</li>
       </ul>
+    </article>
+
+    <article class="info-card">
+      <h2 class="info-title">Plugins 扩展</h2>
+      <p class="info-line">
+        <span>非控制模式也能扩展</span>
+        <code>&lt;OneChart :plugins="[glPlugin(), statPlugin()]" /&gt;</code>
+      </p>
+      <p class="info-line">
+        <span>额外依赖</span>
+        业务方仍需自行安装
+        <code>echarts-gl</code>
+        /
+        <code>echarts-stat</code>
+      </p>
     </article>
 
     <article class="info-card">
@@ -217,7 +230,7 @@ const {
 }
 
 .info-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-top: 24px;
 }
 

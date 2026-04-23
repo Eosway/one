@@ -1,19 +1,16 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
-import { BarChart } from 'echarts/charts'
-import { GridComponent, TitleComponent, TooltipComponent } from 'echarts/components'
-import { CanvasRenderer } from 'echarts/renderers'
-import { createOneChartRuntime, useOneChart } from '@eosway/one-chart'
+import { computed, useTemplateRef } from 'vue'
+import { useOneChart } from '@eosway/one-chart'
 import type { OneChartEventMap, OneChartOption } from '@eosway/one-chart'
 import type { SalesChartControl, SalesPreset } from '../types/sales'
 
-interface ComposableSalesChartProps {
+interface OneChartComposableDemoProps {
   preset: SalesPreset
   loading?: boolean
   height?: number | string
 }
 
-const props = withDefaults(defineProps<ComposableSalesChartProps>(), {
+const props = withDefaults(defineProps<OneChartComposableDemoProps>(), {
   loading: false,
   height: 420,
 })
@@ -21,12 +18,12 @@ const props = withDefaults(defineProps<ComposableSalesChartProps>(), {
 const emit = defineEmits<{
   barClick: [summary: string]
   ready: []
-  runtimeReady: [moduleCount: number]
 }>()
-
-const runtime = createOneChartRuntime({
-  modules: [BarChart, GridComponent, TitleComponent, TooltipComponent, CanvasRenderer],
-})
+const chartRef = useTemplateRef<HTMLElement>('chart')
+const elementRef = computed(() => chartRef.value ?? undefined)
+const chartStyle = computed(() => ({
+  minHeight: typeof props.height === 'number' ? `${props.height}px` : props.height,
+}))
 
 const peakIndex = computed(() => {
   const max = Math.max(...props.preset.values)
@@ -113,19 +110,12 @@ const events: OneChartEventMap = {
   },
 }
 
-const { elRef, dispatchAction, ready, resize, setOption } = useOneChart(() => ({
-  runtime,
+const { dispatchAction, resize, setOption } = useOneChart(elementRef, () => ({
   option: option.value,
   loading: props.loading,
-  width: '100%',
-  height: props.height,
   events,
   onReady: () => emit('ready'),
 }))
-
-onMounted(() => {
-  emit('runtimeReady', runtime.installedModules.size)
-})
 
 function highlightPeak(): void {
   dispatchAction({
@@ -148,13 +138,10 @@ defineExpose<SalesChartControl>({
   highlightPeak,
   rerender,
 })
-
-void elRef
-void ready
 </script>
 
 <template>
-  <div ref="elRef" class="chart-host" />
+  <div ref="chart" class="chart-host" :style="chartStyle" />
 </template>
 
 <style scoped>
