@@ -1,6 +1,6 @@
 {
   "name": "@eosway/one",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Aggregate entry for eosway one packages.",
   "private": false,
   "keywords": [
