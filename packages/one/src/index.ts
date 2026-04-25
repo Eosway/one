@@ -1,11 +1,22 @@
 /**
  * @eosway/one-chat
  */
-export { useStreamChat } from '@eosway/one-chat'
+export { useChatAssistant, useChatConversation, useStreamChat } from '@eosway/one-chat'
 
-export type { ChatMessage, ChatStreamEvent, ChatStreamMetadata, SendMessageInput, StreamChatStatus, UseStreamChatOptions } from '@eosway/one-chat'
+export type {
+  ChatAssistant,
+  ChatConversation,
+  ChatMessage,
+  ChatStreamEvent,
+  ChatStreamMetadata,
+  SendMessageInput,
+  StreamChatStatus,
+  UseChatAssistantOptions,
+  UseChatConversationOptions,
+  UseStreamChatOptions,
+} from '@eosway/one-chat'
 
-export type { UseStreamChatReturn } from '@eosway/one-chat'
+export type { UseChatAssistantReturn, UseChatConversationReturn, UseStreamChatReturn } from '@eosway/one-chat'
 
 /**
  * @eosway/one-chart

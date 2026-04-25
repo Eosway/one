@@ -27,6 +27,23 @@ export interface ChatMessage {
   metadata?: Record<string, unknown>
 }
 
+export interface ChatConversation {
+  id: string
+  title?: string
+  messages: ChatMessage[]
+  assistantId?: string
+  metadata?: Record<string, unknown>
+}
+
+export interface ChatAssistant {
+  id: string
+  name: string
+  description?: string
+  welcomeMessage?: string
+  suggestions?: string[]
+  metadata?: Record<string, unknown>
+}
+
 export interface ChatUsage {
   inputTokens?: number
   outputTokens?: number
@@ -111,4 +128,40 @@ export interface UseStreamChatReturn {
   retry: () => Promise<ChatMessage | undefined>
   clear: () => void
   setMessages: (messages: ChatMessage[]) => void
+}
+
+export interface UseChatConversationOptions {
+  initialConversationId?: string
+  initialConversationList?: ChatConversation[]
+  createId?: () => string
+}
+
+export interface UseChatConversationReturn {
+  conversationList: Ref<ChatConversation[]>
+  currentConversationId: Ref<string | undefined>
+  currentConversation: ComputedRef<ChatConversation | undefined>
+  hasConversation: ComputedRef<boolean>
+  createConversation: (input?: Partial<Omit<ChatConversation, 'id' | 'messages'>> & { id?: string; messages?: ChatMessage[] }) => ChatConversation
+  setConversationList: (conversationList: ChatConversation[]) => void
+  selectConversation: (conversationId: string | undefined) => void
+  updateConversation: (conversationId: string, patch: Partial<Omit<ChatConversation, 'id'>>) => void
+  removeConversation: (conversationId: string) => void
+  upsertConversationMessages: (conversationId: string, messages: ChatMessage[]) => void
+  clearConversation: () => void
+}
+
+export interface UseChatAssistantOptions {
+  initialAssistantId?: string
+  initialAssistantList?: ChatAssistant[]
+}
+
+export interface UseChatAssistantReturn {
+  assistantList: Ref<ChatAssistant[]>
+  currentAssistantId: Ref<string | undefined>
+  currentAssistant: ComputedRef<ChatAssistant | undefined>
+  hasAssistant: ComputedRef<boolean>
+  setAssistantList: (assistantList: ChatAssistant[]) => void
+  selectAssistant: (assistantId: string | undefined) => void
+  updateAssistant: (assistantId: string, patch: Partial<Omit<ChatAssistant, 'id'>>) => void
+  clearAssistant: () => void
 }

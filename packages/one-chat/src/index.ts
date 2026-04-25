@@ -3,8 +3,12 @@ export { createOpenAICompatibleChatStream } from './streams/createOpenAICompatib
 export { createAnthropicChatStream } from './streams/createAnthropicChatStream'
 export { createDifyChatStream } from './streams/createDifyChatStream'
 export { useStreamChat } from './composables/useStreamChat'
+export { useChatConversation } from './composables/useChatConversation'
+export { useChatAssistant } from './composables/useChatAssistant'
 
 export type {
+  ChatAssistant,
+  ChatConversation,
   AnthropicChatStreamOptions,
   ChatFinishReason,
   ChatMessage,
@@ -22,6 +26,10 @@ export type {
   SendMessageInput,
   SseMessage,
   StreamChatStatus,
+  UseChatAssistantOptions,
+  UseChatAssistantReturn,
+  UseChatConversationOptions,
+  UseChatConversationReturn,
   UseStreamChatOptions,
   UseStreamChatReturn,
 } from './types/public'
