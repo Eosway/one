@@ -10,6 +10,7 @@
 
 | 包名                | 版本                                                                                                                  | 目录                                         |
 | ------------------- | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| `@eosway/one-chat`  | 待发布                                                                                                                | [`packages/one-chat`](./packages/one-chat)   |
 | `@eosway/one`       | [![npm version](https://img.shields.io/npm/v/@eosway/one.svg)](https://www.npmjs.com/package/@eosway/one)             | [`packages/one`](./packages/one)             |
 | `@eosway/one-chart` | [![npm version](https://img.shields.io/npm/v/@eosway/one-chart.svg)](https://www.npmjs.com/package/@eosway/one-chart) | [`packages/one-chart`](./packages/one-chart) |
 
@@ -31,3 +32,7 @@ pnpm run test
 pnpm run build
 pnpm run clean
 ```
+
+## 设计文档
+
+- [Chat Architecture](./docs/chat-architecture.md)

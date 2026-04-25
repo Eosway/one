@@ -1,0 +1,58 @@
+{
+  "name": "@eosway/one-chat",
+  "version": "0.1.0",
+  "description": "Vue 3 chat composable and stream adapters for AI platforms.",
+  "keywords": [
+    "vue",
+    "vue3",
+    "chat",
+    "sse",
+    "llm",
+    "ai"
+  ],
+  "homepage": "https://www.npmjs.com/package/@eosway/one-chat",
+  "bugs": {
+    "url": "https://github.com/Eosway/one/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Eosway/one.git",
+    "directory": "packages/one-chat"
+  },
+  "license": "Apache-2.0",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "test": "vitest run",
+    "tsc": "vue-tsc --noEmit -p tsconfig.json",
+    "clean": "rimraf dist",
+    "log": "conventional-changelog -p angular --commit-path . -t one-chat@"
+  },
+  "dependencies": {
+    "eventsource-parser": "^3.0.8"
+  },
+  "devDependencies": {
+    "vue": "^3.5.32"
+  },
+  "peerDependencies": {
+    "vue": ">=3.3.0"
+  },
+  "engines": {
+    "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
+    "pnpm": ">=10.0.0"
+  }
+}

@@ -28,6 +28,10 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
+    "./chat": {
+      "types": "./dist/chat.d.ts",
+      "import": "./dist/chat.js"
+    },
     "./chart": {
       "types": "./dist/chart.d.ts",
       "import": "./dist/chart.js"
@@ -52,6 +56,7 @@
     "log": "conventional-changelog -p angular --commit-path . -t one@"
   },
   "dependencies": {
+    "@eosway/one-chat": "workspace:^",
     "@eosway/one-chart": "workspace:^"
   },
   "peerDependencies": {

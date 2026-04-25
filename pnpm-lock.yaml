@@ -83,6 +83,9 @@ importers:
       '@eosway/one-chart':
         specifier: workspace:^
         version: link:../one-chart
+      '@eosway/one-chat':
+        specifier: workspace:^
+        version: link:../one-chat
       echarts:
         specifier: '>=5.5.0'
         version: 5.6.0
@@ -108,6 +111,16 @@ importers:
       echarts:
         specifier: ^5.6.0
         version: 5.6.0
+      vue:
+        specifier: ^3.5.32
+        version: 3.5.32(typescript@5.9.3)
+
+  packages/one-chat:
+    dependencies:
+      eventsource-parser:
+        specifier: ^3.0.8
+        version: 3.0.8
+    devDependencies:
       vue:
         specifier: ^3.5.32
         version: 3.5.32(typescript@5.9.3)
@@ -1068,6 +1081,10 @@ packages:
 
   eventemitter3@5.0.4:
     resolution: {integrity: sha512-mlsTRyGaPBjPedk6Bvw+aqbsXDtoAyAzm5MO7JgU+yVRyMQ5O8bD4Kcci7BS85f93veegeCPkL8R4GLClnjLFw==}
+
+  eventsource-parser@3.0.8:
+    resolution: {integrity: sha512-70QWGkr4snxr0OXLRWsFLeRBIRPuQOvt4s8QYjmUlmlkyTZkRqS7EDVRZtzU3TiyDbXSzaOeF0XUKy8PchzukQ==}
+    engines: {node: '>=18.0.0'}
 
   expect-type@1.3.0:
     resolution: {integrity: sha512-knvyeauYhqjOYvQ66MznSMs83wmHrCycNEN6Ao+2AeYEfxUIkuiVxdEa1qlGEPK+We3n0THiDciYSsCcgW/DoA==}
@@ -3042,6 +3059,8 @@ snapshots:
   esutils@2.0.3: {}
 
   eventemitter3@5.0.4: {}
+
+  eventsource-parser@3.0.8: {}
 
   expect-type@1.3.0: {}
 

@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "paths": {
+      "@eosway/one-chat": ["../one-chat/src/index.ts"],
       "@eosway/one-chart": ["../one-chart/src/index.ts"],
       "@eosway/one-chart/plugins": ["../one-chart/src/plugins.ts"]
     }
@@ -9,6 +10,8 @@
   "include": [
     "src/**/*",
     "tests/**/*",
+    "../one-chat/src/**/*.ts",
+    "../one-chat/src/**/*.d.ts",
     "../one-chart/src/**/*.ts",
     "../one-chart/src/**/*.d.ts",
     "../one-chart/src/**/*.vue",

@@ -7,6 +7,10 @@ export default defineConfig({
   resolve: {
     alias: [
       {
+        find: '@eosway/one-chat',
+        replacement: fileURLToPath(new URL('../one-chat/src/index.ts', import.meta.url)),
+      },
+      {
         find: '@eosway/one-chart/plugins',
         replacement: fileURLToPath(new URL('../one-chart/src/plugins.ts', import.meta.url)),
       },

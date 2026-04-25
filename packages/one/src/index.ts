@@ -1,4 +1,13 @@
 /**
+ * @eosway/one-chat
+ */
+export { useStreamChat } from '@eosway/one-chat'
+
+export type { ChatMessage, ChatStreamEvent, ChatStreamMetadata, SendMessageInput, StreamChatStatus, UseStreamChatOptions } from '@eosway/one-chat'
+
+export type { UseStreamChatReturn } from '@eosway/one-chat'
+
+/**
  * @eosway/one-chart
  */
 export { OneChart, useOneChart, useOneChartRuntime } from '@eosway/one-chart'
