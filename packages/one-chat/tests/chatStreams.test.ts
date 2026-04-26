@@ -161,4 +161,85 @@ describe('chat stream adapters', () => {
     expect(events[3]).toMatchObject({ type: 'metadata' })
     expect(events[4]).toMatchObject({ type: 'finish' })
   })
+
+  it('supports request-aware payload resolvers', async () => {
+    let openAiBody: Record<string, unknown> | undefined
+    let anthropicBody: Record<string, unknown> | undefined
+    let difyBody: Record<string, unknown> | undefined
+
+    const openAiStream = createOpenAICompatibleChatStream({
+      url: 'https://example.com/v1/chat/completions',
+      model: 'gpt-test',
+      body: (request) => ({
+        assistant_id: request.assistantId,
+      }),
+      fetch: async (_input, init) => {
+        openAiBody = JSON.parse(String(init?.body)) as Record<string, unknown>
+        return createSseResponse(['data: [DONE]\n\n'])
+      },
+    })
+
+    const anthropicStream = createAnthropicChatStream({
+      url: 'https://example.com/v1/messages',
+      model: 'claude-test',
+      maxTokens: 256,
+      body: (request) => ({
+        metadata: {
+          conversationId: request.conversationId,
+        },
+      }),
+      fetch: async (_input, init) => {
+        anthropicBody = JSON.parse(String(init?.body)) as Record<string, unknown>
+        return createSseResponse(['event: message_stop\ndata: {"type":"message_stop"}\n\n'])
+      },
+    })
+
+    const difyStream = createDifyChatStream({
+      url: 'https://example.com/v1/chat-messages',
+      user: 'user-1',
+      inputs: (request) => ({
+        assistantId: request.assistantId,
+      }),
+      body: (request) => ({
+        conversation_marker: request.conversationId,
+      }),
+      fetch: async (_input, init) => {
+        difyBody = JSON.parse(String(init?.body)) as Record<string, unknown>
+        return createSseResponse(['data: {"event":"message_end","conversation_id":"conv_1","message_id":"msg_1"}\n\n'])
+      },
+    })
+
+    for await (const _event of openAiStream({ messages, assistantId: 'assistant-1' })) {
+      void _event
+    }
+
+    for await (const _event of anthropicStream({ messages, conversationId: 'conversation-1' })) {
+      void _event
+    }
+
+    for await (const _event of difyStream({ messages, conversationId: 'conversation-2', assistantId: 'assistant-2' })) {
+      void _event
+    }
+
+    expect(openAiBody).toMatchObject({
+      assistant_id: 'assistant-1',
+      model: 'gpt-test',
+      stream: true,
+    })
+    expect(anthropicBody).toMatchObject({
+      metadata: {
+        conversationId: 'conversation-1',
+      },
+      model: 'claude-test',
+      stream: true,
+    })
+    expect(difyBody).toMatchObject({
+      conversation_marker: 'conversation-2',
+      conversation_id: 'conversation-2',
+      user: 'user-1',
+      inputs: {
+        assistantId: 'assistant-2',
+      },
+    })
+  })
 })

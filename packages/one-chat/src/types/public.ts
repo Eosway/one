@@ -77,7 +77,10 @@ export interface ChatStreamRequest {
 
 export type ChatStream = (request: ChatStreamRequest) => AsyncIterable<ChatStreamEvent>
 
+export type MaybeRef<T> = T | Ref<T> | ComputedRef<T>
+
 export type HeadersResolver = HeadersInit | (() => HeadersInit | Promise<HeadersInit>)
+export type RequestPayloadResolver = Record<string, unknown> | ((request: ChatStreamRequest) => Record<string, unknown> | Promise<Record<string, unknown>>)
 
 export interface ChatStreamFactoryOptions {
   url: string | URL
@@ -87,20 +90,20 @@ export interface ChatStreamFactoryOptions {
 
 export interface OpenAICompatibleChatStreamOptions extends ChatStreamFactoryOptions {
   model: string
-  body?: Record<string, unknown>
+  body?: RequestPayloadResolver
 }
 
 export interface AnthropicChatStreamOptions extends ChatStreamFactoryOptions {
   model: string
   maxTokens: number
   anthropicVersion?: string
-  body?: Record<string, unknown>
+  body?: RequestPayloadResolver
 }
 
 export interface DifyChatStreamOptions extends ChatStreamFactoryOptions {
   user: string
-  inputs?: Record<string, unknown>
-  body?: Record<string, unknown>
+  inputs?: RequestPayloadResolver
+  body?: RequestPayloadResolver
 }
 
 export interface SendMessageInput {
@@ -113,6 +116,9 @@ export type StreamChatStatus = 'idle' | 'submitting' | 'streaming' | 'error'
 export interface UseStreamChatOptions {
   stream: ChatStream
   initialMessages?: ChatMessage[]
+  initialMetadata?: ChatStreamMetadata
+  conversationId?: MaybeRef<string | undefined>
+  assistantId?: MaybeRef<string | undefined>
   createId?: () => string
 }
 
@@ -128,6 +134,7 @@ export interface UseStreamChatReturn {
   retry: () => Promise<ChatMessage | undefined>
   clear: () => void
   setMessages: (messages: ChatMessage[]) => void
+  setMetadata: (metadata: ChatStreamMetadata | undefined) => void
 }
 
 export interface UseChatConversationOptions {

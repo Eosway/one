@@ -33,6 +33,11 @@ pnpm run build
 pnpm run clean
 ```
 
+## Playground
+
+- [`playground/one-chart`](./playground/one-chart)
+- [`playground/one-chat`](./playground/one-chat)
+
 ## 设计文档
 
 - [Chat Architecture](./docs/chat-architecture.md)

@@ -1,5 +1,13 @@
 import type { AnthropicChatStreamOptions, ChatStream, ChatStreamMetadata } from '../types/public'
-import { applyJsonHeaders, createSseIterable, extractSystemPrompt, getConversationMessages, normalizeUsage, resolveHeaders } from './shared'
+import {
+  applyJsonHeaders,
+  createSseIterable,
+  extractSystemPrompt,
+  getConversationMessages,
+  normalizeUsage,
+  resolveHeaders,
+  resolveRequestPayload,
+} from './shared'
 
 interface AnthropicEventChunk {
   type?: string
@@ -23,6 +31,7 @@ interface AnthropicEventChunk {
 export function createAnthropicChatStream(options: AnthropicChatStreamOptions): ChatStream {
   return async function* stream(request) {
     const headers = await resolveHeaders(options.headers)
+    const payload = await resolveRequestPayload(options.body, request)
     applyJsonHeaders(headers)
 
     if (!headers.has('x-api-key') && !headers.has('X-API-Key')) {
@@ -48,7 +57,7 @@ export function createAnthropicChatStream(options: AnthropicChatStreamOptions): 
       headers,
       signal: request.signal,
       body: JSON.stringify({
-        ...options.body,
+        ...payload,
         model: options.model,
         max_tokens: options.maxTokens,
         stream: true,

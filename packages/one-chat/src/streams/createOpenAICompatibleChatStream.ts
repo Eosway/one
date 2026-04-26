@@ -1,5 +1,5 @@
 import type { ChatStream, ChatStreamMetadata, OpenAICompatibleChatStreamOptions } from '../types/public'
-import { applyJsonHeaders, createSseIterable, normalizeUsage, resolveHeaders } from './shared'
+import { applyJsonHeaders, createSseIterable, normalizeUsage, resolveHeaders, resolveRequestPayload } from './shared'
 
 interface OpenAICompatibleChunk {
   id?: string
@@ -19,6 +19,7 @@ interface OpenAICompatibleChunk {
 export function createOpenAICompatibleChatStream(options: OpenAICompatibleChatStreamOptions): ChatStream {
   return async function* stream(request) {
     const headers = await resolveHeaders(options.headers)
+    const payload = await resolveRequestPayload(options.body, request)
     applyJsonHeaders(headers)
 
     let started = false
@@ -31,7 +32,7 @@ export function createOpenAICompatibleChatStream(options: OpenAICompatibleChatSt
       headers,
       signal: request.signal,
       body: JSON.stringify({
-        ...options.body,
+        ...payload,
         model: options.model,
         stream: true,
         messages: request.messages.map((item) => ({

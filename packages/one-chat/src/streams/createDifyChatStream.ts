@@ -1,5 +1,5 @@
 import type { ChatStream, ChatStreamMetadata, DifyChatStreamOptions } from '../types/public'
-import { applyJsonHeaders, createSseIterable, getLastUserMessage, normalizeUsage, resolveHeaders } from './shared'
+import { applyJsonHeaders, createSseIterable, getLastUserMessage, normalizeUsage, resolveHeaders, resolveRequestPayload } from './shared'
 
 interface DifyChunk {
   event?: string
@@ -24,6 +24,8 @@ export function createDifyChatStream(options: DifyChatStreamOptions): ChatStream
     }
 
     const headers = await resolveHeaders(options.headers)
+    const inputs = await resolveRequestPayload(options.inputs, request)
+    const payload = await resolveRequestPayload(options.body, request)
     applyJsonHeaders(headers)
 
     let started = false
@@ -36,8 +38,8 @@ export function createDifyChatStream(options: DifyChatStreamOptions): ChatStream
       headers,
       signal: request.signal,
       body: JSON.stringify({
-        ...options.body,
-        inputs: options.inputs ?? {},
+        ...payload,
+        inputs,
         query: lastUserMessage.content,
         response_mode: 'streaming',
         conversation_id: request.conversationId,

@@ -1,6 +1,6 @@
 {
   "name": "@eosway/one-chat",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Vue 3 chat composable and stream adapters for AI platforms.",
   "keywords": [
     "vue",

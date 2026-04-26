@@ -141,6 +141,19 @@ importers:
         specifier: ^6.0.6
         version: 6.0.6(vite@8.0.9(@types/node@25.6.0)(jiti@2.6.1)(yaml@2.8.3))(vue@3.5.32(typescript@5.9.3))
 
+  playground/one-chat:
+    dependencies:
+      '@eosway/one-chat':
+        specifier: workspace:*
+        version: link:../../packages/one-chat
+      vue:
+        specifier: ^3.5.32
+        version: 3.5.32(typescript@5.9.3)
+    devDependencies:
+      '@vitejs/plugin-vue':
+        specifier: ^6.0.6
+        version: 6.0.6(vite@8.0.9(@types/node@25.6.0)(jiti@2.6.1)(yaml@2.8.3))(vue@3.5.32(typescript@5.9.3))
+
 packages:
 
   '@babel/code-frame@7.29.0':

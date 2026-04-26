@@ -1,5 +1,5 @@
 import { fetchSse } from '../sse/fetchSse'
-import type { ChatMessage, ChatUsage, HeadersResolver } from '../types/public'
+import type { ChatMessage, ChatStreamRequest, ChatUsage, HeadersResolver, RequestPayloadResolver } from '../types/public'
 
 export async function resolveHeaders(resolver?: HeadersResolver): Promise<Headers> {
   if (!resolver) {
@@ -8,6 +8,14 @@ export async function resolveHeaders(resolver?: HeadersResolver): Promise<Header
 
   const resolved = typeof resolver === 'function' ? await resolver() : resolver
   return new Headers(resolved)
+}
+
+export async function resolveRequestPayload(resolver: RequestPayloadResolver | undefined, request: ChatStreamRequest): Promise<Record<string, unknown>> {
+  if (!resolver) {
+    return {}
+  }
+
+  return typeof resolver === 'function' ? await resolver(request) : resolver
 }
 
 export function applyJsonHeaders(headers: Headers): void {

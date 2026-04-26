@@ -1,3 +1,4 @@
+import { computed, ref } from 'vue'
 import { describe, expect, it } from 'vitest'
 import { useStreamChat, type ChatStreamEvent } from '../src'
 
@@ -73,6 +74,83 @@ describe('useStreamChat', () => {
       content: 'partial',
       status: 'done',
     })
+  })
+
+  it('passes conversation and assistant context into stream requests', async () => {
+    const conversationId = ref('conversation-1')
+    const assistantId = computed(() => 'assistant-1')
+    const receivedRequests: Array<{ conversationId?: string; assistantId?: string }> = []
+
+    const chat = useStreamChat({
+      createId: createIncrementalId(),
+      conversationId,
+      assistantId,
+      stream: async function* (request): AsyncGenerator<ChatStreamEvent> {
+        receivedRequests.push({
+          conversationId: request.conversationId,
+          assistantId: request.assistantId,
+        })
+        yield { type: 'start' }
+        yield { type: 'finish' }
+      },
+    })
+
+    await chat.send('Hello')
+
+    conversationId.value = 'conversation-2'
+    await chat.retry()
+
+    expect(receivedRequests).toEqual([
+      {
+        conversationId: 'conversation-1',
+        assistantId: 'assistant-1',
+      },
+      {
+        conversationId: 'conversation-2',
+        assistantId: 'assistant-1',
+      },
+    ])
+  })
+
+  it('allows replacing metadata when restoring another conversation', async () => {
+    const requests: Array<{ conversationId?: string }> = []
+    const chat = useStreamChat({
+      createId: createIncrementalId(),
+      stream: async function* (request): AsyncGenerator<ChatStreamEvent> {
+        requests.push({ conversationId: request.conversationId })
+        yield {
+          type: 'start',
+          metadata: {
+            conversationId: 'remote-conversation-1',
+          },
+        }
+        yield { type: 'finish' }
+      },
+    })
+
+    await chat.send('Hello')
+
+    chat.setMessages([
+      {
+        id: 'id-3',
+        role: 'user',
+        content: 'Restored',
+      },
+    ])
+    chat.setMetadata({
+      conversationId: 'remote-conversation-2',
+    })
+
+    await chat.retry()
+
+    expect(requests).toEqual([
+      {
+        conversationId: undefined,
+      },
+      {
+        conversationId: 'remote-conversation-2',
+      },
+    ])
   })
 })
 

@@ -1,4 +1,4 @@
-import { computed, getCurrentScope, onScopeDispose, ref, shallowRef } from 'vue'
+import { computed, getCurrentScope, onScopeDispose, ref, shallowRef, unref } from 'vue'
 import type { ChatMessage, ChatStreamMetadata, SendMessageInput, StreamChatStatus, UseStreamChatOptions, UseStreamChatReturn } from '../types/public'
 
 const defaultCreateId = (): string => {
@@ -14,7 +14,7 @@ export function useStreamChat(options: UseStreamChatOptions): UseStreamChatRetur
   const messages = ref<ChatMessage[]>(cloneMessages(options.initialMessages ?? []))
   const status = ref<StreamChatStatus>('idle')
   const error = shallowRef<unknown>()
-  const metadata = shallowRef<ChatStreamMetadata>()
+  const metadata = shallowRef<ChatStreamMetadata | undefined>(cloneMetadata(options.initialMetadata))
   const isStreaming = computed(() => status.value === 'submitting' || status.value === 'streaming')
   const canRetry = computed(() => lastRequestMessages.value.length > 0 && !isStreaming.value)
 
@@ -67,6 +67,10 @@ export function useStreamChat(options: UseStreamChatOptions): UseStreamChatRetur
     messages.value = cloneMessages(nextMessages)
   }
 
+  function setMetadata(nextMetadata: ChatStreamMetadata | undefined): void {
+    metadata.value = cloneMetadata(nextMetadata)
+  }
+
   async function runStream(requestMessages: ChatMessage[]): Promise<ChatMessage | undefined> {
     const requestSnapshot = cloneMessages(requestMessages)
     const assistantMessage: ChatMessage = {
@@ -87,8 +91,8 @@ export function useStreamChat(options: UseStreamChatOptions): UseStreamChatRetur
       for await (const event of options.stream({
         messages: requestSnapshot,
         signal: abortController.signal,
-        conversationId: metadata.value?.conversationId,
-        assistantId: metadata.value?.messageId,
+        conversationId: resolveMaybeRef(options.conversationId) ?? metadata.value?.conversationId,
+        assistantId: resolveMaybeRef(options.assistantId),
       })) {
         if (event.type === 'start') {
           status.value = 'streaming'
@@ -171,7 +175,12 @@ export function useStreamChat(options: UseStreamChatOptions): UseStreamChatRetur
     retry,
     clear,
     setMessages,
+    setMetadata,
   }
+}
+
+function resolveMaybeRef(value: UseStreamChatOptions['conversationId'] | UseStreamChatOptions['assistantId']): string | undefined {
+  return value === undefined ? undefined : unref(value)
 }
 
 function normalizeInput(input: string | SendMessageInput, createId: () => string): ChatMessage {
@@ -196,6 +205,20 @@ function cloneMessages(messages: ChatMessage[]): ChatMessage[] {
     ...message,
     metadata: message.metadata ? { ...message.metadata } : undefined,
   }))
+}
+
+function cloneMetadata(metadata: ChatStreamMetadata | undefined): ChatStreamMetadata | undefined {
+  if (!metadata) {
+    return undefined
+  }
+
+  return {
+    conversationId: metadata.conversationId,
+    messageId: metadata.messageId,
+    responseId: metadata.responseId,
+    usage: metadata.usage,
+    raw: metadata.raw,
+  }
 }
 
 function isAbortError(error: unknown): boolean {
