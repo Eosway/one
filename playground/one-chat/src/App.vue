@@ -29,7 +29,7 @@ const platformSummary = computed(() => {
   return '当前关注 delta 拼接、完成信号和 usage 汇总。'
 })
 
-const sortedConversations = computed(() => [...playground.conversations.conversationList.value].reverse())
+const sortedConversations = computed(() => [...playground.visibleConversations.value].reverse())
 
 function formatJson(value: unknown): string {
   return JSON.stringify(value, null, 2)
@@ -148,7 +148,7 @@ function onSubmit(): void {
           <div class="panel-header">
             <div>
               <h2 class="panel-title">助手</h2>
-              <p class="panel-subtitle">切换当前助手，观察请求内容和回复上下文的变化。</p>
+              <p class="panel-subtitle">切换当前助手，仅展示该助手下的会话，并观察请求上下文的变化。</p>
             </div>
           </div>
 
@@ -159,7 +159,8 @@ function onSubmit(): void {
               class="list-card list-card-rail"
               :class="{ 'list-card-active': assistant.id === playground.assistants.currentAssistantId.value }"
               type="button"
-              @click="playground.assistants.selectAssistant(assistant.id)">
+              :disabled="playground.chat.isStreaming.value"
+              @click="playground.selectAssistant(assistant.id)">
               <strong>{{ assistant.name }}</strong>
               <span>{{ assistant.description }}</span>
             </button>
@@ -180,14 +181,14 @@ function onSubmit(): void {
           <div class="panel-header">
             <div>
               <h2 class="panel-title">会话</h2>
-              <p class="panel-subtitle">切换当前会话，观察消息、远端标识和上下文恢复。</p>
+              <p class="panel-subtitle">切换当前会话，恢复该会话的聊天历史和远端标识。</p>
             </div>
           </div>
 
           <div class="stack-list">
-            <button class="list-card list-card-create" type="button" @click="playground.createConversation()">
+            <button class="list-card list-card-create" type="button" :disabled="playground.chat.isStreaming.value" @click="playground.createConversation()">
               <strong>新建会话</strong>
-              <span>创建一个新的空白会话，并切换过去。</span>
+              <span>在当前助手下创建一个新的会话，并切换过去。</span>
             </button>
 
             <button
@@ -196,13 +197,15 @@ function onSubmit(): void {
               class="list-card list-card-rail"
               :class="{ 'list-card-active': conversation.id === playground.conversations.currentConversationId.value }"
               type="button"
-              @click="playground.conversations.selectConversation(conversation.id)">
+              :disabled="playground.chat.isStreaming.value"
+              @click="playground.selectConversation(conversation.id)">
               <span class="list-card-row">
                 <strong>{{ conversation.title || conversation.id }}</strong>
                 <button
                   v-if="conversation.id === playground.conversations.currentConversationId.value"
                   class="inline-action-button"
                   type="button"
+                  :disabled="playground.chat.isStreaming.value"
                   aria-label="删除当前会话"
                   @click.stop="playground.removeCurrentConversation()">
                   删除
@@ -210,6 +213,7 @@ function onSubmit(): void {
               </span>
               <span>{{ conversation.messages.length }} 条消息</span>
             </button>
+            <div v-if="sortedConversations.length === 0" class="empty-state">当前助手下还没有会话，可以先创建一个新会话。</div>
           </div>
         </section>
       </section>
@@ -224,7 +228,9 @@ function onSubmit(): void {
           <div class="action-row">
             <button class="ghost-button" type="button" :disabled="!playground.chat.canRetry.value" @click="playground.chat.retry()">重试</button>
             <button class="ghost-button" type="button" :disabled="!playground.chat.isStreaming.value" @click="playground.chat.stop()">停止</button>
-            <button class="ghost-button" type="button" @click="playground.resetCurrentConversation()">清空当前会话</button>
+            <button class="ghost-button" type="button" :disabled="playground.chat.isStreaming.value" @click="playground.resetCurrentConversation()">
+              清空当前会话
+            </button>
           </div>
         </div>
 
@@ -540,6 +546,15 @@ function onSubmit(): void {
 .list-card-active {
   border-color: rgba(14, 116, 144, 0.35);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(220, 242, 248, 0.92));
+}
+
+.empty-state {
+  padding: 18px 16px;
+  border: 1px dashed rgba(148, 163, 184, 0.28);
+  border-radius: 18px;
+  background: rgba(248, 250, 252, 0.7);
+  color: #64748b;
+  line-height: 1.6;
 }
 
 .suggestion-row,

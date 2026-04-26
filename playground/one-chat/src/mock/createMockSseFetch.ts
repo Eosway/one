@@ -30,7 +30,7 @@ export function createMockSseFetch(
             lines.push(`event: ${chunk.event}`)
           }
           lines.push(`data: ${typeof chunk.data === 'string' ? chunk.data : JSON.stringify(chunk.data)}`)
-          lines.push('')
+          lines.push('', '')
 
           controller.enqueue(encoder.encode(lines.join('\n')))
         }

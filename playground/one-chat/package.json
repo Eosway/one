@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "test": "vitest run",
     "tsc": "vue-tsc --noEmit -p tsconfig.json",
     "build": "pnpm run tsc && vite build",
     "preview": "vite preview",

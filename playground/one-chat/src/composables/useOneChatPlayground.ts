@@ -212,6 +212,7 @@ function createSuccessChunks(platform: PlaygroundPlatform, delay: number, body: 
       : typeof body === 'object' && body !== null && 'metadata' in body
         ? 'metadata'
         : 'default'
+  const mockSpeech = createMockSpeechSegments(platform, assistantHint)
 
   if (platform === 'openai-compatible') {
     return [
@@ -222,7 +223,7 @@ function createSuccessChunks(platform: PlaygroundPlatform, delay: number, body: 
           choices: [
             {
               delta: {
-                content: '这是 OpenAI-compatible 返回的第一段内容。',
+                content: mockSpeech[0],
               },
               finish_reason: null,
             },
@@ -236,7 +237,7 @@ function createSuccessChunks(platform: PlaygroundPlatform, delay: number, body: 
           choices: [
             {
               delta: {
-                content: ` 当前助手标识为 ${assistantHint}。`,
+                content: mockSpeech[1],
               },
               finish_reason: null,
             },
@@ -250,15 +251,29 @@ function createSuccessChunks(platform: PlaygroundPlatform, delay: number, body: 
           choices: [
             {
               delta: {
-                content: ' 这段内容可用于检查增量拼接、结束状态和 usage 汇总。',
+                content: mockSpeech[2],
+              },
+              finish_reason: null,
+            },
+          ],
+        },
+      },
+      {
+        delay,
+        data: {
+          id: 'resp_mock_1',
+          choices: [
+            {
+              delta: {
+                content: mockSpeech[3],
               },
               finish_reason: 'stop',
             },
           ],
           usage: {
-            prompt_tokens: 18,
-            completion_tokens: 26,
-            total_tokens: 44,
+            prompt_tokens: 20,
+            completion_tokens: 38,
+            total_tokens: 58,
           },
         },
       },
@@ -291,7 +306,7 @@ function createSuccessChunks(platform: PlaygroundPlatform, delay: number, body: 
           type: 'content_block_delta',
           delta: {
             type: 'text_delta',
-            text: 'Anthropic 语义层已经开始产出文本增量。',
+            text: mockSpeech[0],
           },
         },
       },
@@ -302,7 +317,29 @@ function createSuccessChunks(platform: PlaygroundPlatform, delay: number, body: 
           type: 'content_block_delta',
           delta: {
             type: 'text_delta',
-            text: ` 当前助手标识为 ${assistantHint}。`,
+            text: mockSpeech[1],
+          },
+        },
+      },
+      {
+        delay,
+        event: 'content_block_delta',
+        data: {
+          type: 'content_block_delta',
+          delta: {
+            type: 'text_delta',
+            text: mockSpeech[2],
+          },
+        },
+      },
+      {
+        delay,
+        event: 'content_block_delta',
+        data: {
+          type: 'content_block_delta',
+          delta: {
+            type: 'text_delta',
+            text: mockSpeech[3],
           },
         },
       },
@@ -315,7 +352,7 @@ function createSuccessChunks(platform: PlaygroundPlatform, delay: number, body: 
             stop_reason: 'end_turn',
           },
           usage: {
-            output_tokens: 22,
+            output_tokens: 34,
           },
         },
       },
@@ -334,7 +371,7 @@ function createSuccessChunks(platform: PlaygroundPlatform, delay: number, body: 
       delay,
       data: {
         event: 'message',
-        answer: 'Dify 语义层首段输出。',
+        answer: mockSpeech[0],
         conversation_id: 'dify-conversation-mock',
         message_id: 'dify-message-1',
       },
@@ -343,7 +380,25 @@ function createSuccessChunks(platform: PlaygroundPlatform, delay: number, body: 
       delay,
       data: {
         event: 'message',
-        answer: ` 当前助手标识为 ${assistantHint}，可用于观察 conversation_id 与 message_id 的变化。`,
+        answer: mockSpeech[1],
+        conversation_id: 'dify-conversation-mock',
+        message_id: 'dify-message-1',
+      },
+    },
+    {
+      delay,
+      data: {
+        event: 'message',
+        answer: mockSpeech[2],
+        conversation_id: 'dify-conversation-mock',
+        message_id: 'dify-message-1',
+      },
+    },
+    {
+      delay,
+      data: {
+        event: 'message',
+        answer: mockSpeech[3],
         conversation_id: 'dify-conversation-mock',
         message_id: 'dify-message-1',
       },
@@ -356,13 +411,40 @@ function createSuccessChunks(platform: PlaygroundPlatform, delay: number, body: 
         message_id: 'dify-message-1',
         metadata: {
           usage: {
-            prompt_tokens: 12,
-            completion_tokens: 24,
-            total_tokens: 36,
+            prompt_tokens: 14,
+            completion_tokens: 36,
+            total_tokens: 50,
           },
         },
       },
     },
+  ]
+}
+
+function createMockSpeechSegments(platform: PlaygroundPlatform, assistantHint: string): [string, string, string, string] {
+  if (platform === 'anthropic') {
+    return [
+      'Anthropic mock 第一段：已进入流式响应，可以开始观察 text delta。',
+      ' 第二段：当前助手为 ' + assistantHint + '，用于验证上下文是否透传。',
+      ' 第三段：这句话会继续追加在同一条 assistant 消息后面。',
+      ' 第四段：如果你看到完整收尾，说明事件顺序、结束原因和 usage 汇总都正常。',
+    ]
+  }
+
+  if (platform === 'dify') {
+    return [
+      'Dify mock 第一段：现在开始逐步返回 answer 字段。',
+      ' 第二段：当前助手为 ' + assistantHint + '，可用于观察请求上下文。',
+      ' 第三段：conversation_id 与 message_id 会在整个续聊过程中保持稳定。',
+      ' 第四段：如果这句也出现，说明前面的 SSE 分段已经被正确拼接。',
+    ]
+  }
+
+  return [
+    'OpenAI mock 第一段：已收到请求，正在按 SSE delta 逐步输出。',
+    ' 第二段：当前助手为 ' + assistantHint + '，可用于验证上下文透传。',
+    ' 第三段：这条回复会持续追加到同一条 assistant 消息上。',
+    ' 第四段：如果你看到完整结尾，说明增量拼接、完成信号和 usage 汇总都正常。',
   ]
 }
 
@@ -582,18 +664,33 @@ export function useOneChatPlayground() {
     assistantId: assistants.currentAssistantId,
   })
 
+  const visibleConversations = computed(() => {
+    const currentAssistantId = assistants.currentAssistantId.value
+
+    if (!currentAssistantId) {
+      return conversations.conversationList.value
+    }
+
+    return conversations.conversationList.value.filter((conversation) => conversation.assistantId === currentAssistantId)
+  })
+
   const latestAssistantMessage = computed(() => [...chat.messages.value].reverse().find((message) => message.role === 'assistant'))
-  const currentConversationTitle = computed(() => conversations.currentConversation.value?.title ?? '未命名会话')
+  const currentConversationTitle = computed(() => conversations.currentConversation.value?.title ?? '未选择会话')
   const currentAssistantName = computed(() => assistants.currentAssistant.value?.name ?? '未选择助手')
+  const lastConversationIdByAssistant = ref<Record<string, string>>({})
+  let isRestoringConversationState = false
 
   function syncConversationState(): void {
+    if (isRestoringConversationState) {
+      return
+    }
+
     const currentConversationId = conversations.currentConversationId.value
     if (!currentConversationId) {
       return
     }
 
     conversations.updateConversation(currentConversationId, {
-      assistantId: assistants.currentAssistantId.value,
       messages: cloneMessages(chat.messages.value),
       metadata: {
         ...(conversations.currentConversation.value?.metadata ?? {}),
@@ -620,37 +717,6 @@ export function useOneChatPlayground() {
   )
 
   watch(
-    () => conversations.currentConversationId.value,
-    (conversationId: string | undefined) => {
-      const conversation = conversations.conversationList.value.find((item) => item.id === conversationId)
-      chat.setMessages(cloneMessages(conversation?.messages ?? []))
-      chat.setMetadata({
-        conversationId: conversation?.metadata?.remoteConversationId as string | undefined,
-        messageId: conversation?.metadata?.remoteMessageId as string | undefined,
-      })
-
-      if (conversation?.assistantId && assistants.assistantList.value.some((item) => item.id === conversation.assistantId)) {
-        assistants.selectAssistant(conversation.assistantId)
-      }
-    },
-    { immediate: true }
-  )
-
-  watch(
-    () => assistants.currentAssistantId.value,
-    (assistantId: string | undefined) => {
-      const currentConversationId = conversations.currentConversationId.value
-      if (!currentConversationId) {
-        return
-      }
-
-      conversations.updateConversation(currentConversationId, {
-        assistantId,
-      })
-    }
-  )
-
-  watch(
     () => platform.value,
     (nextPlatform: PlaygroundPlatform) => {
       if (nextPlatform === 'anthropic') {
@@ -673,10 +739,68 @@ export function useOneChatPlayground() {
     { immediate: true }
   )
 
+  function rememberConversationForAssistant(assistantId: string | undefined, conversationId: string | undefined): void {
+    if (!assistantId || !conversationId) {
+      return
+    }
+
+    const conversation = conversations.conversationList.value.find((item) => item.id === conversationId)
+    if (!conversation || conversation.assistantId !== assistantId) {
+      return
+    }
+
+    lastConversationIdByAssistant.value = {
+      ...lastConversationIdByAssistant.value,
+      [assistantId]: conversationId,
+    }
+  }
+
+  function restoreChatFromConversation(conversationId: string | undefined): void {
+    const conversation = conversations.conversationList.value.find((item) => item.id === conversationId)
+
+    isRestoringConversationState = true
+    chat.clear()
+    chat.setMessages(cloneMessages(conversation?.messages ?? []))
+    chat.setMetadata(
+      conversation
+        ? {
+            conversationId: conversation.metadata?.remoteConversationId as string | undefined,
+            messageId: conversation.metadata?.remoteMessageId as string | undefined,
+          }
+        : undefined
+    )
+    isRestoringConversationState = false
+
+    rememberConversationForAssistant(assistants.currentAssistantId.value, conversationId)
+  }
+
+  function syncConversationSelectionForAssistant(assistantId: string | undefined): void {
+    const currentConversationId = conversations.currentConversationId.value
+    const currentConversationVisible = visibleConversations.value.some((conversation) => conversation.id === currentConversationId)
+
+    if (currentConversationVisible) {
+      rememberConversationForAssistant(assistantId, currentConversationId)
+      restoreChatFromConversation(currentConversationId)
+      return
+    }
+
+    const rememberedConversationId = assistantId ? lastConversationIdByAssistant.value[assistantId] : undefined
+    const nextConversationId = visibleConversations.value.some((conversation) => conversation.id === rememberedConversationId)
+      ? rememberedConversationId
+      : visibleConversations.value[0]?.id
+
+    conversations.selectConversation(nextConversationId)
+    restoreChatFromConversation(nextConversationId)
+  }
+
   async function sendMessage(): Promise<void> {
     const content = draft.value.trim()
     if (!content) {
       return
+    }
+
+    if (!conversations.currentConversationId.value) {
+      createConversation()
     }
 
     draft.value = ''
@@ -692,10 +816,36 @@ export function useOneChatPlayground() {
     }
   }
 
+  function selectAssistant(assistantId: string | undefined): void {
+    if (chat.isStreaming.value) {
+      return
+    }
+
+    assistants.selectAssistant(assistantId)
+    syncConversationSelectionForAssistant(assistantId)
+  }
+
+  function selectConversation(conversationId: string | undefined): void {
+    if (chat.isStreaming.value) {
+      return
+    }
+
+    if (conversationId && !visibleConversations.value.some((conversation) => conversation.id === conversationId)) {
+      throw new Error(`Conversation "${conversationId}" does not belong to the current assistant.`)
+    }
+
+    conversations.selectConversation(conversationId)
+    restoreChatFromConversation(conversationId)
+  }
+
   function createConversation(): void {
+    if (chat.isStreaming.value) {
+      return
+    }
+
     const currentAssistant = assistants.currentAssistant.value
     const conversation = conversations.createConversation({
-      title: `新会话 ${conversations.conversationList.value.length + 1}`,
+      title: `新会话 ${visibleConversations.value.length + 1}`,
       assistantId: currentAssistant?.id,
       metadata: {},
       messages: currentAssistant?.welcomeMessage
@@ -710,17 +860,29 @@ export function useOneChatPlayground() {
         : [],
     })
 
-    chat.setMessages(cloneMessages(conversation.messages))
-    chat.setMetadata(undefined)
+    restoreChatFromConversation(conversation.id)
   }
 
   function removeCurrentConversation(): void {
+    if (chat.isStreaming.value) {
+      return
+    }
+
     const currentConversationId = conversations.currentConversationId.value
     if (!currentConversationId) {
       return
     }
 
+    const currentVisibleConversationList = visibleConversations.value
+    const currentIndex = currentVisibleConversationList.findIndex((conversation) => conversation.id === currentConversationId)
+
     conversations.removeConversation(currentConversationId)
+
+    const nextVisibleConversationList = visibleConversations.value
+    const nextConversation = nextVisibleConversationList[currentIndex] ?? nextVisibleConversationList[Math.max(currentIndex - 1, 0)]
+
+    conversations.selectConversation(nextConversation?.id)
+    restoreChatFromConversation(nextConversation?.id)
   }
 
   function clearLogs(): void {
@@ -729,6 +891,10 @@ export function useOneChatPlayground() {
   }
 
   function resetCurrentConversation(): void {
+    if (chat.isStreaming.value) {
+      return
+    }
+
     chat.clear()
     const currentConversationId = conversations.currentConversationId.value
     if (!currentConversationId) {
@@ -749,6 +915,8 @@ export function useOneChatPlayground() {
     draft.value = content
   }
 
+  syncConversationSelectionForAssistant(assistants.currentAssistantId.value)
+
   return {
     mode,
     platform,
@@ -764,10 +932,13 @@ export function useOneChatPlayground() {
     eventLogs,
     assistants,
     conversations,
+    visibleConversations,
     chat,
     latestAssistantMessage,
     currentConversationTitle,
     currentAssistantName,
+    selectAssistant,
+    selectConversation,
     sendMessage,
     createConversation,
     removeCurrentConversation,
