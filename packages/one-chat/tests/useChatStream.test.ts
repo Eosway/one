@@ -1,10 +1,10 @@
 import { computed, ref } from 'vue'
 import { describe, expect, it } from 'vitest'
-import { useStreamChat, type ChatStreamEvent } from '../src'
+import { useChatStream, type ChatStreamEvent } from '../src'
 
-describe('useStreamChat', () => {
+describe('useChatStream', () => {
   it('streams assistant messages into session state', async () => {
-    const chat = useStreamChat({
+    const chat = useChatStream({
       createId: createIncrementalId(),
       stream: async function* (): AsyncGenerator<ChatStreamEvent> {
         yield { type: 'start' }
@@ -34,7 +34,7 @@ describe('useStreamChat', () => {
 
   it('retries the last request snapshot', async () => {
     let count = 0
-    const chat = useStreamChat({
+    const chat = useChatStream({
       createId: createIncrementalId(),
       stream: async function* (): AsyncGenerator<ChatStreamEvent> {
         count += 1
@@ -54,7 +54,7 @@ describe('useStreamChat', () => {
   })
 
   it('stops an active stream', async () => {
-    const chat = useStreamChat({
+    const chat = useChatStream({
       createId: createIncrementalId(),
       stream: async function* ({ signal }): AsyncGenerator<ChatStreamEvent> {
         yield { type: 'start' }
@@ -81,7 +81,7 @@ describe('useStreamChat', () => {
     const assistantId = computed(() => 'assistant-1')
     const receivedRequests: Array<{ conversationId?: string; assistantId?: string }> = []
 
-    const chat = useStreamChat({
+    const chat = useChatStream({
       createId: createIncrementalId(),
       conversationId,
       assistantId,
@@ -114,7 +114,7 @@ describe('useStreamChat', () => {
 
   it('allows replacing metadata when restoring another conversation', async () => {
     const requests: Array<{ conversationId?: string }> = []
-    const chat = useStreamChat({
+    const chat = useChatStream({
       createId: createIncrementalId(),
       stream: async function* (request): AsyncGenerator<ChatStreamEvent> {
         requests.push({ conversationId: request.conversationId })

@@ -28,13 +28,13 @@ pnpm add echarts-stat
 根入口仅导出核心组件与 hook，不导出 plugins：
 
 ```ts
-import { OneChart, useOneChart, useOneChartRuntime, useStreamChat } from '@eosway/one'
+import { OneChart, useOneChart, useOneChartRuntime, useChatStream } from '@eosway/one'
 ```
 
 通过命名空间子路径访问具体组件包：
 
 ```ts
-import { createOpenAICompatibleChatStream, useStreamChat } from '@eosway/one/chat'
+import { createOpenAICompatibleChatStream, useChatStream } from '@eosway/one/chat'
 ```
 
 ```ts
@@ -51,7 +51,7 @@ import { glPlugin, statPlugin } from '@eosway/one/chart/plugins'
 
 `@eosway/one` 仅导出核心组件与 hook：
 
-- `useStreamChat`
+- `useChatStream`
 - `OneChart`
 - `useOneChart`
 - `useOneChartRuntime`

@@ -1,5 +1,5 @@
 import { computed, getCurrentScope, onScopeDispose, ref, shallowRef, unref } from 'vue'
-import type { ChatMessage, ChatStreamMetadata, SendMessageInput, StreamChatStatus, UseStreamChatOptions, UseStreamChatReturn } from '../types/public'
+import type { ChatMessage, ChatStreamMetadata, ChatStreamStatus, SendMessageInput, UseChatStreamOptions, UseChatStreamReturn } from '../types/public'
 
 const defaultCreateId = (): string => {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
@@ -9,10 +9,10 @@ const defaultCreateId = (): string => {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`
 }
 
-export function useStreamChat(options: UseStreamChatOptions): UseStreamChatReturn {
+export function useChatStream(options: UseChatStreamOptions): UseChatStreamReturn {
   const createId = options.createId ?? defaultCreateId
   const messages = ref<ChatMessage[]>(cloneMessages(options.initialMessages ?? []))
-  const status = ref<StreamChatStatus>('idle')
+  const status = ref<ChatStreamStatus>('idle')
   const error = shallowRef<unknown>()
   const metadata = shallowRef<ChatStreamMetadata | undefined>(cloneMetadata(options.initialMetadata))
   const isStreaming = computed(() => status.value === 'submitting' || status.value === 'streaming')
@@ -179,7 +179,7 @@ export function useStreamChat(options: UseStreamChatOptions): UseStreamChatRetur
   }
 }
 
-function resolveMaybeRef(value: UseStreamChatOptions['conversationId'] | UseStreamChatOptions['assistantId']): string | undefined {
+function resolveMaybeRef(value: UseChatStreamOptions['conversationId'] | UseChatStreamOptions['assistantId']): string | undefined {
   return value === undefined ? undefined : unref(value)
 }
 

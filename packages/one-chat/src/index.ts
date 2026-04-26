@@ -2,7 +2,7 @@ export { fetchSse, useFetchSse, FetchSseHttpError, FetchSseProtocolError } from 
 export { createOpenAICompatibleChatStream } from './streams/createOpenAICompatibleChatStream'
 export { createAnthropicChatStream } from './streams/createAnthropicChatStream'
 export { createDifyChatStream } from './streams/createDifyChatStream'
-export { useStreamChat } from './composables/useStreamChat'
+export { useChatStream } from './composables/useChatStream'
 export { useChatConversation } from './composables/useChatConversation'
 export { useChatAssistant } from './composables/useChatAssistant'
 
@@ -25,11 +25,11 @@ export type {
   OpenAICompatibleChatStreamOptions,
   SendMessageInput,
   SseMessage,
-  StreamChatStatus,
+  ChatStreamStatus,
   UseChatAssistantOptions,
   UseChatAssistantReturn,
+  UseChatStreamOptions,
+  UseChatStreamReturn,
   UseChatConversationOptions,
   UseChatConversationReturn,
-  UseStreamChatOptions,
-  UseStreamChatReturn,
 } from './types/public'

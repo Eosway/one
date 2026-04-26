@@ -46,7 +46,7 @@ function onSubmit(): void {
       <div class="hero-copy">
         <p class="app-eyebrow">Eosway One Playground</p>
         <h1 class="app-title">one-chat playground</h1>
-        <p class="app-desc">这里用于验证 one-chat 的接入链路和状态变化。页面按三行组织：先看状态，再调整运行设置并执行对话，最后查看调试信息。</p>
+        <p class="app-desc">这里用于验证 one-chat 的接入链路和状态变化。</p>
       </div>
     </header>
 
@@ -57,14 +57,14 @@ function onSubmit(): void {
         <p class="summary-desc">{{ platformSummary }}</p>
       </article>
       <article class="summary-card app-surface span-2">
+        <span class="summary-label">当前助手</span>
+        <strong class="summary-value">{{ playground.currentAssistantName }}</strong>
+        <p class="summary-desc">查看助手切换后的上下文变化</p>
+      </article>
+      <article class="summary-card app-surface span-2">
         <span class="summary-label">当前会话</span>
         <strong class="summary-value">{{ playground.currentConversationTitle }}</strong>
         <p class="summary-desc">消息 {{ playground.chat.messages.value.length }} 条</p>
-      </article>
-      <article class="summary-card app-surface span-2">
-        <span class="summary-label">当前助手</span>
-        <strong class="summary-value">{{ playground.currentAssistantName }}</strong>
-        <p class="summary-desc">用于查看助手切换后的上下文变化</p>
       </article>
       <article class="summary-card app-surface span-2">
         <span class="summary-label">流状态</span>
@@ -148,7 +148,7 @@ function onSubmit(): void {
           <div class="panel-header">
             <div>
               <h2 class="panel-title">助手</h2>
-              <p class="panel-subtitle">切换当前助手，仅展示该助手下的会话，并观察请求上下文的变化。</p>
+              <p class="panel-subtitle">切换当前助手，并观察请求上下文的变化。</p>
             </div>
           </div>
 
@@ -181,14 +181,14 @@ function onSubmit(): void {
           <div class="panel-header">
             <div>
               <h2 class="panel-title">会话</h2>
-              <p class="panel-subtitle">切换当前会话，恢复该会话的聊天历史和远端标识。</p>
+              <p class="panel-subtitle">切换当前会话，恢复该会话的聊天历史和标识。</p>
             </div>
           </div>
 
           <div class="stack-list">
             <button class="list-card list-card-create" type="button" :disabled="playground.chat.isStreaming.value" @click="playground.createConversation()">
               <strong>新建会话</strong>
-              <span>在当前助手下创建一个新的会话，并切换过去。</span>
+              <span>创建一个新的会话，并切换过去。</span>
             </button>
 
             <button
@@ -222,7 +222,7 @@ function onSubmit(): void {
         <div class="panel-header">
           <div>
             <h2 class="panel-title">对话区</h2>
-            <p class="panel-subtitle">这里执行发送、停止和重试。消息区只展示当前会话的内容。</p>
+            <p class="panel-subtitle">展示当前会话的内容，执行发送、停止和重试。</p>
           </div>
 
           <div class="action-row">

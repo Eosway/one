@@ -111,9 +111,9 @@ export interface SendMessageInput {
   metadata?: Record<string, unknown>
 }
 
-export type StreamChatStatus = 'idle' | 'submitting' | 'streaming' | 'error'
+export type ChatStreamStatus = 'idle' | 'submitting' | 'streaming' | 'error'
 
-export interface UseStreamChatOptions {
+export interface UseChatStreamOptions {
   stream: ChatStream
   initialMessages?: ChatMessage[]
   initialMetadata?: ChatStreamMetadata
@@ -122,9 +122,9 @@ export interface UseStreamChatOptions {
   createId?: () => string
 }
 
-export interface UseStreamChatReturn {
+export interface UseChatStreamReturn {
   messages: Ref<ChatMessage[]>
-  status: Ref<StreamChatStatus>
+  status: Ref<ChatStreamStatus>
   error: Ref<unknown>
   metadata: Ref<ChatStreamMetadata | undefined>
   isStreaming: ComputedRef<boolean>

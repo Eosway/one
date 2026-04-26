@@ -10,7 +10,7 @@ import {
   type ChatStreamEvent,
   useChatAssistant,
   useChatConversation,
-  useStreamChat,
+  useChatStream,
 } from '@eosway/one-chat'
 import { createMockSseFetch } from '../mock/createMockSseFetch'
 
@@ -42,7 +42,7 @@ const defaultAssistants: ChatAssistant[] = [
   {
     id: 'assistant-support',
     name: 'Support Assistant',
-    description: '适合查看基础问答、错误处理和停止生成。',
+    description: '适合基础问答、错误处理和停止生成。',
     welcomeMessage: '这是一个用于联调基础对话链路的助手。',
     suggestions: ['给我一个简短欢迎词', '介绍当前会话状态', '演示一段流式回答'],
     metadata: {
@@ -52,7 +52,7 @@ const defaultAssistants: ChatAssistant[] = [
   {
     id: 'assistant-analyst',
     name: 'Analyst Assistant',
-    description: '适合查看助手切换后的上下文和请求参数变化。',
+    description: '观查助手切换后的上下文和参数变化。',
     welcomeMessage: '你可以切换到这个助手，观察请求内容和回复风格的变化。',
     suggestions: ['总结最近三条消息', '给出一条排查建议', '说明当前上下文包含哪些信息'],
     metadata: {
@@ -635,7 +635,7 @@ export function useOneChatPlayground() {
     )
   )
 
-  const chat = useStreamChat({
+  const chat = useChatStream({
     stream: async function* (request) {
       const currentAssistant = assistants.currentAssistant.value
       const nextRequest = {
