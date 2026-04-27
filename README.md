@@ -33,6 +33,8 @@ pnpm run build
 pnpm run clean
 ```
 
+`pnpm run tsc` 基于 TypeScript Project References，通过根 `tsconfig.json` 统一编排 `packages/*` 类型检查顺序。`pnpm run tsc:playground` 继续通过 workspace filter 下发到 `playground/*` 自行维护的 `tsconfig.json`。
+
 ## Playground
 
 - [`playground/one-chart`](./playground/one-chart)

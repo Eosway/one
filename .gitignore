@@ -25,3 +25,5 @@ pnpm-debug.log*
 *.sw?
 
 coverage
+*.tsbuildinfo
+node_modules/.tmp

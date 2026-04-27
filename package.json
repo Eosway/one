@@ -10,7 +10,7 @@
     "clean": "pnpm -r --filter './packages/*' run clean",
     "format": "prettier --write .",
     "lint": "eslint --fix .",
-    "tsc": "pnpm -r --filter './packages/*' run tsc",
+    "tsc": "vue-tsc -b tsconfig.json",
     "tsc:playground": "pnpm -r --filter './playground/*' run tsc",
     "prepare": "husky"
   },

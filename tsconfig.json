@@ -1,8 +1,11 @@
 {
   "compilerOptions": {
+    /* Language and environment */
     "target": "ES2020",
     "module": "ESNext",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
+
+    /* Module resolution */
     "moduleResolution": "bundler",
     "esModuleInterop": true,
     "allowJs": true,
@@ -14,9 +17,8 @@
     "moduleDetection": "force",
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "noEmit": true,
 
-    /* Linting */
+    /* Type checking */
     "strict": true,
     "verbatimModuleSyntax": true,
     "noUncheckedSideEffectImports": true,
@@ -25,6 +27,8 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["packages/**/*"],
-  "exclude": ["dist"]
+
+  /* Workspace package graph */
+  "files": [],
+  "references": [{ "path": "./packages/one-chart" }, { "path": "./packages/one-chat" }, { "path": "./packages/one" }]
 }

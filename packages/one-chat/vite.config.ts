@@ -7,7 +7,7 @@ export default defineConfig({
       entryRoot: 'src',
       include: ['src'],
       exclude: ['tests', '**/*.test.ts', 'vite.config.ts', 'vitest.config.ts'],
-      tsconfigPath: '../../tsconfig.json',
+      tsconfigPath: './tsconfig.json',
     }),
   ],
   build: {
