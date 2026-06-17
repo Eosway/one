@@ -1,0 +1,57 @@
+{
+  "name": "@eosway/one-seamless-scroll",
+  "version": "0.0.1",
+  "description": "Vue 3 seamless scroll component for small and medium list display.",
+  "keywords": [
+    "vue",
+    "vue3",
+    "scroll",
+    "seamless-scroll",
+    "marquee",
+    "dashboard",
+    "list"
+  ],
+  "homepage": "https://www.npmjs.com/package/@eosway/one-seamless-scroll",
+  "bugs": {
+    "url": "https://github.com/Eosway/one/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Eosway/one.git",
+    "directory": "packages/one-seamless-scroll"
+  },
+  "license": "Apache-2.0",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "test": "vitest run",
+    "tsc": "vue-tsc --noEmit -p tsconfig.json",
+    "clean": "rimraf dist",
+    "log": "conventional-changelog -p angular --commit-path . -t one-seamless-scroll@"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vue": "^3.5.32"
+  },
+  "peerDependencies": {
+    "vue": ">=3.5.0"
+  },
+  "engines": {
+    "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
+    "pnpm": ">=10.0.0"
+  }
+}

@@ -13,7 +13,7 @@
     "jsxImportSource": "vue",
 
     /* Bundler mode */
-    "allowImportingTsExtensions": true,
+    "allowImportingTsExtensions": false,
     "moduleDetection": "force",
     "resolveJsonModule": true,
     "skipLibCheck": true,
@@ -30,5 +30,10 @@
 
   /* Workspace package graph */
   "files": [],
-  "references": [{ "path": "./packages/one-chart" }, { "path": "./packages/one-chat" }, { "path": "./packages/one" }]
+  "references": [
+    { "path": "./packages/one-chart" },
+    { "path": "./packages/one-chat" },
+    { "path": "./packages/one-seamless-scroll" },
+    { "path": "./packages/one" }
+  ]
 }
