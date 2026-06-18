@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "tsc": "vue-tsc --noEmit -p tsconfig.json",
+    "tsc": "vue-tsc -b",
     "build": "pnpm run tsc && vite build",
     "preview": "vite preview",
     "clean": "rimraf dist"

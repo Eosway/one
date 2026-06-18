@@ -89,6 +89,9 @@ importers:
       vue-eslint-parser:
         specifier: ^10.4.0
         version: 10.4.0(eslint@9.39.4(jiti@2.6.1))
+      vue-tsc:
+        specifier: 'catalog:'
+        version: 3.3.5(typescript@5.9.3)
 
   packages/one:
     dependencies:

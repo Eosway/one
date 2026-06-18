@@ -6,13 +6,8 @@
     "emitDeclarationOnly": true,
     "declarationMap": true,
     "rootDir": "./src",
-    "outDir": "./node_modules/.tmp/types",
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo",
-    "paths": {
-      "@eosway/one-chat": ["../one-chat/src/index.ts"],
-      "@eosway/one-chart": ["../one-chart/src/index.ts"],
-      "@eosway/one-chart/plugins": ["../one-chart/src/plugins.ts"]
-    }
+    "outDir": "./dist",
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo"
   },
   "references": [{ "path": "../one-chat" }, { "path": "../one-chart" }, { "path": "../one-seamless-scroll" }],
   "include": ["src/**/*"],

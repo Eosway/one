@@ -39,7 +39,7 @@
   "scripts": {
     "build": "vite build",
     "test": "vitest run",
-    "tsc": "vue-tsc --noEmit -p tsconfig.json",
+    "tsc": "vue-tsc -b",
     "clean": "rimraf dist",
     "log": "conventional-changelog -p angular --commit-path . -t one-seamless-scroll@"
   },
