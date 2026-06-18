@@ -1,14 +1,12 @@
-import vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vite'
 import dts from 'vite-plugin-dts'
 
 export default defineConfig({
   plugins: [
-    vue(),
     dts({
       entryRoot: 'src',
       include: ['src'],
-      exclude: ['tests', '**/*.test.ts', 'vite.config.ts', 'vitest.config.ts'],
+      exclude: ['**/*.test.ts', 'vite.config.ts'],
       tsconfigPath: './tsconfig.json',
     }),
   ],
