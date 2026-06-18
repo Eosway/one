@@ -39,6 +39,10 @@
     "./chart/plugins": {
       "types": "./dist/chart/plugins.d.ts",
       "import": "./dist/chart/plugins.js"
+    },
+    "./seamless-scroll": {
+      "types": "./dist/seamless-scroll.d.ts",
+      "import": "./dist/seamless-scroll.js"
     }
   },
   "main": "./dist/index.js",
@@ -57,7 +61,8 @@
   },
   "dependencies": {
     "@eosway/one-chat": "workspace:^",
-    "@eosway/one-chart": "workspace:^"
+    "@eosway/one-chart": "workspace:^",
+    "@eosway/one-seamless-scroll": "workspace:^"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "catalog:",

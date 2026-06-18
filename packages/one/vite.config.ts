@@ -20,11 +20,12 @@ export default defineConfig({
         chat: 'src/chat.ts',
         chart: 'src/chart.ts',
         'chart/plugins': 'src/chart/plugins.ts',
+        'seamless-scroll': 'src/seamless-scroll.ts',
       },
       formats: ['es'],
     },
     rolldownOptions: {
-      external: (source) => source === '@eosway/one-chat' || source === '@eosway/one-chart' || source === '@eosway/one-chart/plugins',
+      external: ['@eosway/one-chat', '@eosway/one-chart', '@eosway/one-chart/plugins', '@eosway/one-seamless-scroll'],
       output: {
         entryFileNames: '[name].js',
         chunkFileNames: 'chunks/[name]-[hash].js',

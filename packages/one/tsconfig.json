@@ -14,7 +14,7 @@
       "@eosway/one-chart/plugins": ["../one-chart/src/plugins.ts"]
     }
   },
-  "references": [{ "path": "../one-chat" }, { "path": "../one-chart" }],
+  "references": [{ "path": "../one-chat" }, { "path": "../one-chart" }, { "path": "../one-seamless-scroll" }],
   "include": ["src/**/*"],
   "exclude": ["dist"]
 }

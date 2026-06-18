@@ -98,6 +98,9 @@ importers:
       '@eosway/one-chat':
         specifier: workspace:^
         version: link:../one-chat
+      '@eosway/one-seamless-scroll':
+        specifier: workspace:^
+        version: link:../one-seamless-scroll
       echarts:
         specifier: '>=5.5.0'
         version: 5.6.0
