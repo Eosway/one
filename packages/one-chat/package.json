@@ -46,7 +46,13 @@
     "eventsource-parser": "^3.0.8"
   },
   "devDependencies": {
-    "vue": "^3.5.32"
+    "happy-dom": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-dts": "catalog:",
+    "vitest": "catalog:",
+    "vue": "catalog:",
+    "vue-tsc": "catalog:"
   },
   "peerDependencies": {
     "vue": ">=3.3.0"

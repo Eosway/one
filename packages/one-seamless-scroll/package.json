@@ -43,9 +43,16 @@
     "clean": "rimraf dist",
     "log": "conventional-changelog -p angular --commit-path . -t one-seamless-scroll@"
   },
-  "dependencies": {},
   "devDependencies": {
-    "vue": "^3.5.32"
+    "@vitejs/plugin-vue": "catalog:",
+    "@vue/test-utils": "catalog:",
+    "happy-dom": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-dts": "catalog:",
+    "vitest": "catalog:",
+    "vue": "catalog:",
+    "vue-tsc": "catalog:"
   },
   "peerDependencies": {
     "vue": ">=3.5.0"

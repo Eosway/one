@@ -45,8 +45,16 @@
     "log": "conventional-changelog -p angular --commit-path . -t one-chart@"
   },
   "devDependencies": {
+    "@vitejs/plugin-vue": "catalog:",
+    "@vue/test-utils": "catalog:",
     "echarts": "^5.6.0",
-    "vue": "^3.5.32"
+    "happy-dom": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-dts": "catalog:",
+    "vitest": "catalog:",
+    "vue": "catalog:",
+    "vue-tsc": "catalog:"
   },
   "peerDependencies": {
     "echarts": ">=5.5.0",

@@ -13,9 +13,14 @@
   },
   "dependencies": {
     "@eosway/one-chat": "workspace:*",
-    "vue": "^3.5.32"
+    "vue": "catalog:"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^6.0.6"
+    "@vitejs/plugin-vue": "catalog:",
+    "happy-dom": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:",
+    "vue-tsc": "catalog:"
   }
 }
