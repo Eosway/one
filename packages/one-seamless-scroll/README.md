@@ -135,6 +135,10 @@ sync(): void
 ### 基础示例
 
 ```vue
+<script setup lang="ts">
+import { OneSeamlessScroll } from '@eosway/one-seamless-scroll'
+</script>
+
 <template>
   <OneSeamlessScroll :list="rows">
     <template #item="{ item }">

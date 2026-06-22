@@ -1,8 +1,10 @@
 <script setup lang="ts" generic="T = unknown">
 import { computed, ref, useTemplateRef, watch } from 'vue'
+import type { CSSProperties } from 'vue'
 import type { OneSeamlessScrollExposed, OneSeamlessScrollProps, OneSeamlessScrollState, OneSeamlessScrollStateChangeEvent } from '../types/public'
 import { useSeamlessMotion } from '../composables/useSeamlessMotion'
 import { resolveSeamlessItemKey } from '../utils/itemKey'
+import { LAYOUT_STYLES } from './OneSeamlessScroll.styles'
 
 defineOptions({ name: 'OneSeamlessScroll' })
 
@@ -67,7 +69,8 @@ const { offsetY, shouldDuplicate, sync } = useSeamlessMotion({
   isLooping,
   speedPixelsPerSecond,
 })
-const trackStyle = computed(() => ({
+const trackStyle = computed<CSSProperties>(() => ({
+  ...LAYOUT_STYLES.loopGroup,
   transform: `translate3d(0, ${offsetY.value}px, 0)`,
 }))
 
@@ -108,27 +111,29 @@ defineExpose<OneSeamlessScrollExposed>({
 </script>
 
 <template>
-  <div ref="root" class="one-seamless-scroll" :data-state="state" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
-    <div v-if="state === 'empty'" class="one-seamless-scroll__empty">
+  <div ref="root" class="one-seamless-scroll" :style="LAYOUT_STYLES.root" :data-state="state" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
+    <div v-if="state === 'empty'" class="one-seamless-scroll__empty" :style="LAYOUT_STYLES.empty">
       <slot name="empty" />
     </div>
 
-    <div v-else ref="viewport" class="one-seamless-scroll__viewport">
+    <div v-else ref="viewport" class="one-seamless-scroll__viewport" :style="LAYOUT_STYLES.viewport">
       <div class="one-seamless-scroll__track" :style="trackStyle">
-        <div ref="firstLoop" class="one-seamless-scroll__group">
+        <div ref="firstLoop" class="one-seamless-scroll__group" :style="LAYOUT_STYLES.loopGroup">
           <div
             v-for="renderItem in normalizedList.map((item, index) => ({ item, index, loop: 0 }))"
             :key="resolveSeamlessItemKey(renderItem.item, renderItem.index, renderItem.loop, props.itemKey)"
-            class="one-seamless-scroll__item">
+            class="one-seamless-scroll__item"
+            :style="LAYOUT_STYLES.item">
             <slot name="item" :item="renderItem.item" :index="renderItem.index" />
           </div>
         </div>
 
-        <div v-if="shouldDuplicate" class="one-seamless-scroll__group" aria-hidden="true">
+        <div v-if="shouldDuplicate" class="one-seamless-scroll__group" :style="LAYOUT_STYLES.loopGroup" aria-hidden="true">
           <div
             v-for="renderItem in normalizedList.map((item, index) => ({ item, index, loop: 1 }))"
             :key="resolveSeamlessItemKey(renderItem.item, renderItem.index, renderItem.loop, props.itemKey)"
-            class="one-seamless-scroll__item">
+            class="one-seamless-scroll__item"
+            :style="LAYOUT_STYLES.item">
             <slot name="item" :item="renderItem.item" :index="renderItem.index" />
           </div>
         </div>
@@ -136,32 +141,3 @@ defineExpose<OneSeamlessScrollExposed>({
     </div>
   </div>
 </template>
-
-<style scoped>
-.one-seamless-scroll {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-.one-seamless-scroll__empty,
-.one-seamless-scroll__viewport {
-  width: 100%;
-  height: 100%;
-}
-
-.one-seamless-scroll__track {
-  display: flex;
-  flex-direction: column;
-  will-change: transform;
-}
-
-.one-seamless-scroll__group {
-  display: flex;
-  flex-direction: column;
-}
-
-.one-seamless-scroll__item {
-  flex: 0 0 auto;
-}
-</style>

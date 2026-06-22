@@ -43,6 +43,31 @@ describe('OneSeamlessScroll', () => {
     wrapper.unmount()
   })
 
+  it('renders required layout styles without external CSS', async () => {
+    const wrapper = mount(OneSeamlessScroll, {
+      props: {
+        list: [{ name: 'Alpha' }, { name: 'Beta' }],
+        minItems: 3,
+      },
+      slots: {
+        item: '<div data-testid="item">{{ item.name }}</div>',
+      },
+    })
+
+    await nextTick()
+
+    expect(wrapper.get('.one-seamless-scroll').attributes('style')).toContain('overflow: hidden')
+    expect(wrapper.get('.one-seamless-scroll__viewport').attributes('style')).toContain('height: 100%')
+    expect(wrapper.get('.one-seamless-scroll__track').attributes('style')).toContain('transform:')
+    expect(wrapper.get('.one-seamless-scroll__group').attributes('style')).toContain('flex-direction: column')
+    const itemStyle = wrapper.get('.one-seamless-scroll__item').attributes('style')
+    expect(itemStyle).toContain('flex-grow: 0')
+    expect(itemStyle).toContain('flex-shrink: 0')
+    expect(itemStyle).toContain('flex-basis: auto')
+
+    wrapper.unmount()
+  })
+
   it('enters paused on hover and resumes scrolling on mouse leave', async () => {
     const wrapper = mount(OneSeamlessScroll, {
       props: {
