@@ -41,7 +41,7 @@
     "test": "vitest run",
     "tsc": "vue-tsc -b",
     "clean": "rimraf dist",
-    "log": "conventional-changelog -p angular --commit-path . -t one-seamless-scroll@"
+    "release": "commit-and-tag-version --path . -t one-seamless-scroll@"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "catalog:",

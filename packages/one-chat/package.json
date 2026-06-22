@@ -40,7 +40,7 @@
     "test": "vitest run",
     "tsc": "vue-tsc -b",
     "clean": "rimraf dist",
-    "log": "conventional-changelog -p angular --commit-path . -t one-chat@"
+    "release": "commit-and-tag-version --path . -t one-chat@"
   },
   "dependencies": {
     "eventsource-parser": "^3.0.8"

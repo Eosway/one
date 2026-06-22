@@ -56,7 +56,7 @@
     "build": "vite build",
     "tsc": "vue-tsc -b",
     "clean": "rimraf dist",
-    "log": "conventional-changelog -p angular --commit-path . -t one@"
+    "release": "commit-and-tag-version --path . -t one@"
   },
   "dependencies": {
     "@eosway/one-chat": "workspace:^",
