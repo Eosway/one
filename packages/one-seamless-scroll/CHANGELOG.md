@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.2.0](https://github.com/Eosway/one/compare/one-seamless-scroll@0.1.1...one-seamless-scroll@0.2.0) (2026-06-23)
+
+### Features
+
+- smooth scroll step timing ([fe3984d](https://github.com/Eosway/one/commit/fe3984df290c4209d238e8fd170d6f7d800d663a))
+
+### Bug Fixes
+
+- align scroll state with overflow ([af38e15](https://github.com/Eosway/one/commit/af38e15047be6a4741b7fd62356fd103b8b0f322))
+
 ## [0.1.1](https://github.com/Eosway/one/compare/one-seamless-scroll@0.1.0...one-seamless-scroll@0.1.1) (2026-06-22)
 
 ### Bug Fixes
