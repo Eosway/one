@@ -44,12 +44,26 @@ const normalizedSpeed = computed<number>(() => {
   return Math.max(MIN_SPEED, Math.round(value * 10) / 10)
 })
 
+const isEligibleByInput = computed(() => props.enabled && normalizedList.value.length >= normalizedMinItems.value)
+
+const isLooping = computed(() => isEligibleByInput.value)
+const isScrolling = computed(() => isEligibleByInput.value && !(props.hoverPause && hovered.value))
+const { hasOverflow, shouldDuplicate, sync } = useSeamlessMotion({
+  rootRef,
+  viewportRef,
+  trackRef,
+  firstLoopRef,
+  isScrolling,
+  isLooping,
+  speed: normalizedSpeed,
+})
+
 const state = computed<OneSeamlessScrollState>(() => {
   if (normalizedList.value.length === 0) {
     return 'empty'
   }
 
-  if (!props.enabled || normalizedList.value.length < normalizedMinItems.value) {
+  if (!isEligibleByInput.value || !hasOverflow.value) {
     return 'static'
   }
 
@@ -58,18 +72,6 @@ const state = computed<OneSeamlessScrollState>(() => {
   }
 
   return 'scrolling'
-})
-
-const isLooping = computed(() => state.value === 'scrolling' || state.value === 'paused')
-const isScrolling = computed(() => state.value === 'scrolling')
-const { shouldDuplicate, sync } = useSeamlessMotion({
-  rootRef,
-  viewportRef,
-  trackRef,
-  firstLoopRef,
-  isScrolling,
-  isLooping,
-  speed: normalizedSpeed,
 })
 
 watch(
@@ -95,13 +97,9 @@ function handleMouseLeave(): void {
   }
 }
 
-watch(
-  normalizedList,
-  () => {
-    sync()
-  },
-  { deep: true }
-)
+watch([normalizedList, () => normalizedList.value.length], () => {
+  sync()
+})
 
 defineExpose<OneSeamlessScrollExposed>({
   sync,

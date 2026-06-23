@@ -53,6 +53,10 @@ export interface UseSeamlessMotionResult {
    */
   viewportHeight: Ref<number>
   /**
+   * 第一组内容是否超过可视区域。
+   */
+  hasOverflow: ComputedRef<boolean>
+  /**
    * 当前是否需要渲染第二组内容用于无缝衔接。
    */
   shouldDuplicate: ComputedRef<boolean>
@@ -82,7 +86,8 @@ export function useSeamlessMotion(options: UseSeamlessMotionOptions): UseSeamles
   let timeDebtMs = 0
 
   const firstGroupRef = computed(() => firstLoopRef.value ?? undefined)
-  const shouldDuplicate = computed(() => isLooping.value && viewportHeight.value > 0 && firstLoopHeight.value > viewportHeight.value)
+  const hasOverflow = computed(() => viewportHeight.value > 0 && firstLoopHeight.value > viewportHeight.value)
+  const shouldDuplicate = computed(() => isLooping.value && hasOverflow.value)
   const canAnimate = computed(() => shouldDuplicate.value && firstLoopHeight.value > 0)
 
   function applyTransform(): void {
@@ -256,6 +261,7 @@ export function useSeamlessMotion(options: UseSeamlessMotionOptions): UseSeamles
   return {
     firstLoopHeight,
     viewportHeight,
+    hasOverflow,
     shouldDuplicate,
     canAnimate,
     sync: requestMeasure,

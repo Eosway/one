@@ -46,6 +46,11 @@ function installFrameMock(): { runNextFrame: (timestamp: number) => void; restor
   }
 }
 
+async function runScheduledMeasure(frames: ReturnType<typeof installFrameMock>): Promise<void> {
+  frames.runNextFrame(0)
+  await nextTick()
+}
+
 describe('OneSeamlessScroll', () => {
   it('renders the empty slot and emits the initial empty state', async () => {
     const wrapper = mount(OneSeamlessScroll, {
@@ -170,6 +175,7 @@ describe('OneSeamlessScroll', () => {
   })
 
   it('enters paused on hover and resumes scrolling on mouse leave', async () => {
+    const frames = installFrameMock()
     const wrapper = mount(OneSeamlessScroll, {
       props: {
         list: [{ name: 'Alpha' }, { name: 'Beta' }],
@@ -180,21 +186,27 @@ describe('OneSeamlessScroll', () => {
       },
     })
 
-    await nextTick()
+    setOffsetHeight(wrapper.get('.one-seamless-scroll__viewport').element, 100)
+    setOffsetHeight(wrapper.get('.one-seamless-scroll__group').element, 180)
+    wrapper.vm.sync()
+    await runScheduledMeasure(frames)
     await wrapper.trigger('mouseenter')
     await wrapper.trigger('mouseleave')
 
     expect(wrapper.emitted('state-change')).toEqual([
-      [{ state: 'scrolling', prevState: null }],
+      [{ state: 'static', prevState: null }],
+      [{ state: 'scrolling', prevState: 'static' }],
       [{ state: 'paused', prevState: 'scrolling' }],
       [{ state: 'scrolling', prevState: 'paused' }],
     ])
     expect(wrapper.attributes('data-state')).toBe('scrolling')
 
     wrapper.unmount()
+    frames.restore()
   })
 
   it('keeps scrolling on hover when hoverPause is disabled', async () => {
+    const frames = installFrameMock()
     const wrapper = mount(OneSeamlessScroll, {
       props: {
         list: [{ name: 'Alpha' }, { name: 'Beta' }],
@@ -206,13 +218,17 @@ describe('OneSeamlessScroll', () => {
       },
     })
 
-    await nextTick()
+    setOffsetHeight(wrapper.get('.one-seamless-scroll__viewport').element, 100)
+    setOffsetHeight(wrapper.get('.one-seamless-scroll__group').element, 180)
+    wrapper.vm.sync()
+    await runScheduledMeasure(frames)
     await wrapper.trigger('mouseenter')
 
     expect(wrapper.attributes('data-state')).toBe('scrolling')
-    expect(wrapper.emitted('state-change')).toEqual([[{ state: 'scrolling', prevState: null }]])
+    expect(wrapper.emitted('state-change')).toEqual([[{ state: 'static', prevState: null }], [{ state: 'scrolling', prevState: 'static' }]])
 
     wrapper.unmount()
+    frames.restore()
   })
 
   it('stays static when disabled even if the list reaches minItems', async () => {
@@ -235,7 +251,30 @@ describe('OneSeamlessScroll', () => {
     wrapper.unmount()
   })
 
+  it('stays static when content does not exceed the viewport even if the list reaches minItems', async () => {
+    const wrapper = mount(OneSeamlessScroll, {
+      props: {
+        list: [{ name: 'Alpha' }, { name: 'Beta' }, { name: 'Gamma' }],
+        minItems: 2,
+      },
+      slots: {
+        item: '<div data-testid="item">{{ item.name }}</div>',
+      },
+    })
+
+    setOffsetHeight(wrapper.get('.one-seamless-scroll__viewport').element, 160)
+    setOffsetHeight(wrapper.get('.one-seamless-scroll__group').element, 120)
+    await nextTick()
+
+    expect(wrapper.attributes('data-state')).toBe('static')
+    expect(wrapper.findAll('[data-testid="item"]')).toHaveLength(3)
+    expect(wrapper.emitted('state-change')).toEqual([[{ state: 'static', prevState: null }]])
+
+    wrapper.unmount()
+  })
+
   it('switches from static to scrolling when the list crosses minItems', async () => {
+    const frames = installFrameMock()
     const wrapper = mount(OneSeamlessScroll, {
       props: {
         list: [{ name: 'Alpha' }],
@@ -250,16 +289,23 @@ describe('OneSeamlessScroll', () => {
     await wrapper.setProps({
       list: [{ name: 'Alpha' }, { name: 'Beta' }],
     })
-    await nextTick()
+    setOffsetHeight(wrapper.get('.one-seamless-scroll__viewport').element, 100)
+    setOffsetHeight(wrapper.get('.one-seamless-scroll__group').element, 180)
+    wrapper.vm.sync()
+    await runScheduledMeasure(frames)
 
     expect(wrapper.attributes('data-state')).toBe('scrolling')
-    expect(wrapper.findAll('[data-testid="item"]')).toHaveLength(2)
+    expect(wrapper.findAll('[data-testid="item"]')).toHaveLength(4)
+    expect(wrapper.text()).toContain('Alpha')
+    expect(wrapper.text()).toContain('Beta')
     expect(wrapper.emitted('state-change')).toEqual([[{ state: 'static', prevState: null }], [{ state: 'scrolling', prevState: 'static' }]])
 
     wrapper.unmount()
+    frames.restore()
   })
 
   it('exposes sync as a public method without changing a stable state', async () => {
+    const frames = installFrameMock()
     const wrapper = mount(OneSeamlessScroll, {
       props: {
         list: [{ name: 'Alpha' }, { name: 'Beta' }],
@@ -270,15 +316,19 @@ describe('OneSeamlessScroll', () => {
       },
     })
 
-    await nextTick()
+    setOffsetHeight(wrapper.get('.one-seamless-scroll__viewport').element, 100)
+    setOffsetHeight(wrapper.get('.one-seamless-scroll__group').element, 180)
+    wrapper.vm.sync()
+    await runScheduledMeasure(frames)
 
     expect(typeof wrapper.vm.sync).toBe('function')
     wrapper.vm.sync()
-    await nextTick()
+    await runScheduledMeasure(frames)
 
     expect(wrapper.attributes('data-state')).toBe('scrolling')
-    expect(wrapper.emitted('state-change')).toEqual([[{ state: 'scrolling', prevState: null }]])
+    expect(wrapper.emitted('state-change')).toEqual([[{ state: 'static', prevState: null }], [{ state: 'scrolling', prevState: 'static' }]])
 
     wrapper.unmount()
+    frames.restore()
   })
 })
