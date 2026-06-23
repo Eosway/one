@@ -37,9 +37,12 @@ export interface OneSeamlessScrollProps<T = unknown> {
   /**
    * 滚动速度系数。
    *
-   * 以 `20px/s` 为 `1.0` 个单位，例如：
-   * - `1.0` 表示 `20px/s`
-   * - `2.5` 表示 `50px/s`
+   * `speed=1` 为 `0.5px/frame，≈30px/s @60fps`，例如：
+   * - `0.5` 表示 `0.25px/frame`
+   * - `1.0` 表示 `0.5px/frame`
+   * - `2.0` 表示 `1px/frame`
+   *
+   * 最小值为 `0.1`；最大值不限制，建议 `<=6`；内部按 `0.1` 精度归一化。
    */
   speed?: number
   /**

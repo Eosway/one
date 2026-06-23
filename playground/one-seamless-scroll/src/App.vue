@@ -96,7 +96,7 @@ function setCount(value: number): void {
       </article>
       <article class="app-status-card app-surface">
         <span class="app-status-label">速度系数</span>
-        <strong class="app-status-value">{{ speed.toFixed(1) }} = {{ (speed * 20).toFixed(0) }} px/s</strong>
+        <strong class="app-status-value">{{ speed.toFixed(1) }} = {{ (speed * 0.5).toFixed(2) }}px/frame， ≈{{ (speed * 30).toFixed(0) }}px/s @60fps</strong>
       </article>
     </section>
 
@@ -122,7 +122,7 @@ function setCount(value: number): void {
 
           <label class="field">
             <span class="field-label">速度系数</span>
-            <input v-model.number="speed" type="range" min="0.2" max="6" step="0.1" />
+            <input v-model.number="speed" type="range" min="0.1" max="6" step="0.1" />
             <strong class="field-value">{{ speed.toFixed(1) }}</strong>
           </label>
 
