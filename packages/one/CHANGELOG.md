@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.0](https://github.com/Eosway/one/compare/one@0.3.0...one@0.4.0) (2026-06-23)
+
+### Miscellaneous Chores
+
+- bump one-seamless-scroll to 0.2.0([4e1349f](https://github.com/Eosway/one/commit/4e1349ffd40115f1f7e516e27dd1bb5c367efb3b))
+
 ## [0.3.0](https://github.com/Eosway/one/compare/one@0.2.0...one@0.3.0) (2026-06-22)
 
 ### Features
