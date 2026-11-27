@@ -80,6 +80,14 @@ export interface OneSeamlessScrollProps<T = unknown> {
    * 并使用原生纵向滚动兜底，保证内容不被裁切。
    */
   respectReducedMotion?: boolean
+  /**
+   * 是否允许复制组保留原生可聚焦能力。默认 `false`。
+   *
+   * 默认情况下组件会把复制组内可聚焦元素（`a[href]`、`button`、`input`、
+   * `select`、`textarea`、`[tabindex]`）设置为 `tabindex="-1"`，避免重复 Tab 焦点；
+   * 鼠标点击能力保持不变。设为 `true` 时组件完全不修改复制组。
+   */
+  cloneFocusable?: boolean
 }
 
 /**

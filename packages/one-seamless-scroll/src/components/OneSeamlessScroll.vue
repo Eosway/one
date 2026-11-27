@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T = unknown">
-import { computed, ref, useTemplateRef, watch } from 'vue'
+import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
 import type { OneSeamlessScrollExposed, OneSeamlessScrollProps, OneSeamlessScrollState, OneSeamlessScrollStateChangeEvent } from '../types/public'
 import { useSeamlessMotion } from '../composables/useSeamlessMotion'
 import { usePrefersReducedMotion } from '../composables/usePrefersReducedMotion'
@@ -10,6 +10,7 @@ defineOptions({ name: 'OneSeamlessScroll' })
 
 const DEFAULT_SPEED = 1
 const MIN_SPEED = 0.1
+const CLONE_FOCUSABLE_SELECTOR = 'a[href], button, input, select, textarea, [tabindex]'
 
 const props = withDefaults(defineProps<OneSeamlessScrollProps<T>>(), {
   minItems: 5,
@@ -19,6 +20,7 @@ const props = withDefaults(defineProps<OneSeamlessScrollProps<T>>(), {
   paused: false,
   pauseOnFocus: true,
   respectReducedMotion: true,
+  cloneFocusable: false,
 })
 const emit = defineEmits<{
   'state-change': [payload: OneSeamlessScrollStateChangeEvent]
@@ -38,6 +40,7 @@ const rootRef = useTemplateRef<HTMLElement>('root')
 const viewportRef = useTemplateRef<HTMLElement>('viewport')
 const trackRef = useTemplateRef<HTMLElement>('track')
 const firstLoopRef = useTemplateRef<HTMLElement>('firstLoop')
+const secondLoopRef = useTemplateRef<HTMLElement>('secondLoop')
 
 const normalizedList = computed<T[]>(() => props.list ?? [])
 const firstLoopItems = computed(() => normalizedList.value.map((item, index) => ({ item, index, loop: 0 })))
@@ -161,8 +164,45 @@ watch([normalizedList, () => normalizedList.value.length], () => {
   sync()
 })
 
+/**
+ * 把复制组内的可聚焦元素从 Tab 顺序中移除，鼠标交互保持不变。
+ * 重复执行幂等，只修改复制组自己的 `tabindex`。
+ */
+function guardCloneFocus(): void {
+  if (props.cloneFocusable) {
+    return
+  }
+
+  const group = secondLoopRef.value
+  if (!group) {
+    return
+  }
+
+  group.querySelectorAll<HTMLElement>(CLONE_FOCUSABLE_SELECTOR).forEach((element) => {
+    if (element.getAttribute('tabindex') !== '-1') {
+      element.setAttribute('tabindex', '-1')
+    }
+  })
+}
+
+watch(
+  [() => props.cloneFocusable, shouldDuplicate, secondLoopItems],
+  () => {
+    guardCloneFocus()
+  },
+  { flush: 'post' }
+)
+
+/**
+ * 公开的 `sync()`：重新测量后再次修正复制组的焦点守卫。
+ */
+function handleSync(): void {
+  sync()
+  void nextTick().then(guardCloneFocus)
+}
+
 defineExpose<OneSeamlessScrollExposed>({
-  sync,
+  sync: handleSync,
 })
 </script>
 
@@ -193,7 +233,7 @@ defineExpose<OneSeamlessScrollExposed>({
           </div>
         </div>
 
-        <div v-if="shouldDuplicate" class="one-seamless-scroll__group" :style="LAYOUT_STYLES.loopGroup" aria-hidden="true">
+        <div v-if="shouldDuplicate" ref="secondLoop" class="one-seamless-scroll__group" :style="LAYOUT_STYLES.loopGroup" aria-hidden="true">
           <div
             v-for="renderItem in secondLoopItems"
             :key="resolveSeamlessItemKey(renderItem.item, renderItem.index, renderItem.loop, props.itemKey)"
