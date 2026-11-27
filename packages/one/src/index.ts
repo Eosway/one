@@ -45,4 +45,10 @@ export type { UseOneChartReturn } from '@eosway/one-chart'
  */
 export { OneSeamlessScroll } from '@eosway/one-seamless-scroll'
 
-export type { OneSeamlessScrollExposed, OneSeamlessScrollProps, OneSeamlessScrollState, OneSeamlessScrollStateChangeEvent } from '@eosway/one-seamless-scroll'
+export type {
+  OneSeamlessScrollExposed,
+  OneSeamlessScrollItemSlotProps,
+  OneSeamlessScrollProps,
+  OneSeamlessScrollState,
+  OneSeamlessScrollStateChangeEvent,
+} from '@eosway/one-seamless-scroll'
