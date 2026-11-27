@@ -16,6 +16,25 @@ export interface OneSeamlessScrollStateChangeEvent {
    */
   prevState: OneSeamlessScrollState | null
 }
+
+/**
+ * `OneSeamlessScroll` `item` 插槽参数。
+ */
+export interface OneSeamlessScrollItemSlotProps<T = unknown> {
+  /**
+   * 当前条目数据。
+   */
+  item: T
+  /**
+   * 条目在原始列表中的下标。复制组复用同一下标。
+   */
+  index: number
+  /**
+   * 当前渲染组：`0` 为原始组，`1` 为无缝衔接的复制组。
+   */
+  loop: 0 | 1
+}
+
 /**
  * `OneSeamlessScroll` 组件 props。
  */

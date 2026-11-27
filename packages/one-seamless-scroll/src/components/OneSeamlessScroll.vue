@@ -1,6 +1,12 @@
 <script setup lang="ts" generic="T = unknown">
 import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
-import type { OneSeamlessScrollExposed, OneSeamlessScrollProps, OneSeamlessScrollState, OneSeamlessScrollStateChangeEvent } from '../types/public'
+import type {
+  OneSeamlessScrollExposed,
+  OneSeamlessScrollItemSlotProps,
+  OneSeamlessScrollProps,
+  OneSeamlessScrollState,
+  OneSeamlessScrollStateChangeEvent,
+} from '../types/public'
 import { useSeamlessMotion } from '../composables/useSeamlessMotion'
 import { usePrefersReducedMotion } from '../composables/usePrefersReducedMotion'
 import { resolveSeamlessItemKey } from '../utils/itemKey'
@@ -27,7 +33,7 @@ const emit = defineEmits<{
 }>()
 
 defineSlots<{
-  item(props: { item: T; index: number }): unknown
+  item(props: OneSeamlessScrollItemSlotProps<T>): unknown
   empty(props: Record<string, never>): unknown
 }>()
 
@@ -43,8 +49,8 @@ const firstLoopRef = useTemplateRef<HTMLElement>('firstLoop')
 const secondLoopRef = useTemplateRef<HTMLElement>('secondLoop')
 
 const normalizedList = computed<T[]>(() => props.list ?? [])
-const firstLoopItems = computed(() => normalizedList.value.map((item, index) => ({ item, index, loop: 0 })))
-const secondLoopItems = computed(() => normalizedList.value.map((item, index) => ({ item, index, loop: 1 })))
+const firstLoopItems = computed<OneSeamlessScrollItemSlotProps<T>[]>(() => normalizedList.value.map((item, index) => ({ item, index, loop: 0 as const })))
+const secondLoopItems = computed<OneSeamlessScrollItemSlotProps<T>[]>(() => normalizedList.value.map((item, index) => ({ item, index, loop: 1 as const })))
 const normalizedMinItems = computed<number>(() => {
   const value = Math.trunc(props.minItems)
   return Number.isFinite(value) && value > 0 ? value : 1
@@ -229,7 +235,7 @@ defineExpose<OneSeamlessScrollExposed>({
             :key="resolveSeamlessItemKey(renderItem.item, renderItem.index, renderItem.loop, props.itemKey)"
             class="one-seamless-scroll__item"
             :style="LAYOUT_STYLES.item">
-            <slot name="item" :item="renderItem.item" :index="renderItem.index" />
+            <slot name="item" :item="renderItem.item" :index="renderItem.index" :loop="renderItem.loop" />
           </div>
         </div>
 
@@ -239,7 +245,7 @@ defineExpose<OneSeamlessScrollExposed>({
             :key="resolveSeamlessItemKey(renderItem.item, renderItem.index, renderItem.loop, props.itemKey)"
             class="one-seamless-scroll__item"
             :style="LAYOUT_STYLES.item">
-            <slot name="item" :item="renderItem.item" :index="renderItem.index" />
+            <slot name="item" :item="renderItem.item" :index="renderItem.index" :loop="renderItem.loop" />
           </div>
         </div>
       </div>
