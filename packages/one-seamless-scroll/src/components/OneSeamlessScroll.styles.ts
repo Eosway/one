@@ -6,6 +6,12 @@ export const LAYOUT_STYLES = {
     height: '100%',
     overflow: 'hidden',
   },
+  rootReducedMotion: {
+    width: '100%',
+    height: '100%',
+    overflowY: 'auto',
+    overflowX: 'hidden',
+  },
   empty: {
     width: '100%',
     height: '100%',
@@ -13,6 +19,10 @@ export const LAYOUT_STYLES = {
   viewport: {
     width: '100%',
     height: '100%',
+  },
+  viewportReducedMotion: {
+    width: '100%',
+    height: 'auto',
   },
   loopGroup: {
     display: 'flex',

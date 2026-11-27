@@ -66,3 +66,66 @@ export async function primeOverflow(wrapper: VueWrapper, frames: FrameMock, view
   await runScheduledMeasure(frames)
   await nextTick()
 }
+
+const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)'
+
+export interface MatchMediaMock {
+  matches: () => boolean
+  setMatches: (matches: boolean) => void
+  listenerCount: () => number
+  restore: () => void
+}
+
+export function installMatchMedia(initialMatches: boolean): MatchMediaMock {
+  const original = window.matchMedia
+  const listeners = new Set<(event: MediaQueryListEvent) => void>()
+  let matches = initialMatches
+
+  const mediaQuery = {
+    media: REDUCED_MOTION_QUERY,
+    get matches(): boolean {
+      return matches
+    },
+    onchange: null,
+    addEventListener(type: string, listener: (event: MediaQueryListEvent) => void): void {
+      if (type === 'change') {
+        listeners.add(listener)
+      }
+    },
+    removeEventListener(type: string, listener: (event: MediaQueryListEvent) => void): void {
+      if (type === 'change') {
+        listeners.delete(listener)
+      }
+    },
+    addListener(listener: (event: MediaQueryListEvent) => void): void {
+      listeners.add(listener)
+    },
+    removeListener(listener: (event: MediaQueryListEvent) => void): void {
+      listeners.delete(listener)
+    },
+    dispatchEvent(): boolean {
+      return true
+    },
+  }
+
+  window.matchMedia = vi.fn((query: string) => {
+    if (query !== REDUCED_MOTION_QUERY) {
+      throw new Error(`Unexpected media query: ${query}`)
+    }
+
+    return mediaQuery as unknown as MediaQueryList
+  }) as unknown as typeof window.matchMedia
+
+  return {
+    matches: () => matches,
+    setMatches(next: boolean) {
+      matches = next
+      const event = { matches: next, media: mediaQuery.media } as MediaQueryListEvent
+      listeners.forEach((listener) => listener(event))
+    },
+    listenerCount: () => listeners.size,
+    restore() {
+      window.matchMedia = original
+    },
+  }
+}

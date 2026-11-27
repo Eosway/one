@@ -2,6 +2,7 @@
 import { computed, ref, useTemplateRef, watch } from 'vue'
 import type { OneSeamlessScrollExposed, OneSeamlessScrollProps, OneSeamlessScrollState, OneSeamlessScrollStateChangeEvent } from '../types/public'
 import { useSeamlessMotion } from '../composables/useSeamlessMotion'
+import { usePrefersReducedMotion } from '../composables/usePrefersReducedMotion'
 import { resolveSeamlessItemKey } from '../utils/itemKey'
 import { LAYOUT_STYLES } from './OneSeamlessScroll.styles'
 
@@ -17,6 +18,7 @@ const props = withDefaults(defineProps<OneSeamlessScrollProps<T>>(), {
   enabled: true,
   paused: false,
   pauseOnFocus: true,
+  respectReducedMotion: true,
 })
 const emit = defineEmits<{
   'state-change': [payload: OneSeamlessScrollStateChangeEvent]
@@ -29,6 +31,8 @@ defineSlots<{
 
 const hovered = ref(false)
 const focusedWithin = ref(false)
+const prefersReducedMotion = usePrefersReducedMotion()
+const reducedMotionActive = computed(() => props.respectReducedMotion && prefersReducedMotion.value)
 
 const rootRef = useTemplateRef<HTMLElement>('root')
 const viewportRef = useTemplateRef<HTMLElement>('viewport')
@@ -50,8 +54,9 @@ const normalizedSpeed = computed<number>(() => {
 const isEligibleByInput = computed(() => props.enabled && normalizedList.value.length >= normalizedMinItems.value)
 
 const isPausedByInteraction = computed(() => props.paused || focusedWithin.value || (props.hoverPause && hovered.value))
-const isLooping = computed(() => isEligibleByInput.value)
-const isScrolling = computed(() => isEligibleByInput.value && !isPausedByInteraction.value)
+const isEligibleForMotion = computed(() => isEligibleByInput.value && !reducedMotionActive.value)
+const isLooping = computed(() => isEligibleForMotion.value)
+const isScrolling = computed(() => isEligibleForMotion.value && !isPausedByInteraction.value)
 const { hasOverflow, shouldDuplicate, sync } = useSeamlessMotion({
   rootRef,
   viewportRef,
@@ -67,7 +72,7 @@ const state = computed<OneSeamlessScrollState>(() => {
     return 'empty'
   }
 
-  if (!isEligibleByInput.value || !hasOverflow.value) {
+  if (!isEligibleForMotion.value || !hasOverflow.value) {
     return 'static'
   }
 
@@ -138,6 +143,20 @@ watch(
   }
 )
 
+watch(reducedMotionActive, (active: boolean) => {
+  if (!active) {
+    const root = rootRef.value
+    if (root && root.scrollTop !== 0) {
+      root.scrollTop = 0
+    }
+  }
+
+  sync()
+})
+
+const rootStyle = computed(() => (reducedMotionActive.value ? LAYOUT_STYLES.rootReducedMotion : LAYOUT_STYLES.root))
+const viewportStyle = computed(() => (reducedMotionActive.value ? LAYOUT_STYLES.viewportReducedMotion : LAYOUT_STYLES.viewport))
+
 watch([normalizedList, () => normalizedList.value.length], () => {
   sync()
 })
@@ -151,8 +170,9 @@ defineExpose<OneSeamlessScrollExposed>({
   <div
     ref="root"
     class="one-seamless-scroll"
-    :style="LAYOUT_STYLES.root"
+    :style="rootStyle"
     :data-state="state"
+    :data-reduced-motion="reducedMotionActive ? 'true' : undefined"
     @mouseenter="handleMouseEnter"
     @mouseleave="handleMouseLeave"
     @focusin="handleFocusIn"
@@ -161,7 +181,7 @@ defineExpose<OneSeamlessScrollExposed>({
       <slot name="empty" />
     </div>
 
-    <div v-else ref="viewport" class="one-seamless-scroll__viewport" :style="LAYOUT_STYLES.viewport">
+    <div v-else ref="viewport" class="one-seamless-scroll__viewport" :style="viewportStyle">
       <div ref="track" class="one-seamless-scroll__track" :style="LAYOUT_STYLES.loopGroup">
         <div ref="firstLoop" class="one-seamless-scroll__group" :style="LAYOUT_STYLES.loopGroup">
           <div

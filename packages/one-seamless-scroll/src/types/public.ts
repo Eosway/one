@@ -72,6 +72,14 @@ export interface OneSeamlessScrollProps<T = unknown> {
    * 只有焦点真正离开根节点且外部 `paused` 为 `false` 时才恢复滚动。
    */
   pauseOnFocus?: boolean
+  /**
+   * 是否尊重 `prefers-reduced-motion: reduce`。默认 `true`。
+   *
+   * 开启减少动态效果时：停止自动滚动、不复制第二组内容、不应用 `transform`，
+   * 状态为 `static`，根节点标记 `data-reduced-motion="true"`，
+   * 并使用原生纵向滚动兜底，保证内容不被裁切。
+   */
+  respectReducedMotion?: boolean
 }
 
 /**
