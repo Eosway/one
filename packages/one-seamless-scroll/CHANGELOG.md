@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.3.0](https://github.com/Eosway/one/compare/one-seamless-scroll@0.2.0...one-seamless-scroll@0.3.0) (2026-11-27)
+
+### Features
+
+- add paused prop for animation-only pause ([5ae5b89](https://github.com/Eosway/one/commit/5ae5b8953c5cf5efc5ac8eb700806d37c3f0afa9))
+- add reduced-motion native scroll fallback ([456f19b](https://github.com/Eosway/one/commit/456f19b9e6b4417138bb74c5c73dce6a33c23bdc))
+- expose loop in the item slot ([b59cbd2](https://github.com/Eosway/one/commit/b59cbd22f9ee99bbfc28fdcadc9a1ea89bb3cfff))
+- guard cloned focusable elements ([56dd525](https://github.com/Eosway/one/commit/56dd525827103269eabec768df92dfcc2b0c2235))
+- pause while keyboard focus stays inside ([246424b](https://github.com/Eosway/one/commit/246424bee6bd45b89bdc7bc23ad0fadd8e44d8f1))
+
+### Documentation
+
+- document pause, focus, reduced-motion and clone APIs ([d360931](https://github.com/Eosway/one/commit/d3609314e844c62d3a3c56fc6fe0c95337f8144c))
+
 ## [0.2.0](https://github.com/Eosway/one/compare/one-seamless-scroll@0.1.1...one-seamless-scroll@0.2.0) (2026-06-23)
 
 ### Features

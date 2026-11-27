@@ -1,6 +1,6 @@
 {
   "name": "@eosway/one-seamless-scroll",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Vue 3 seamless scroll component for small and medium list display.",
   "keywords": [
     "vue",
