@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { nextTick } from 'vue'
 import OneSeamlessScroll from '../src/components/OneSeamlessScroll.vue'
-import { BASE_FRAME_MS, installFrameMock, runScheduledMeasure, setOffsetHeight, type FrameMock } from './helpers'
+import { BASE_FRAME_MS, installFrameMock, primeOverflow, runScheduledMeasure, setOffsetHeight, type FrameMock } from './helpers'
 
 const itemSlot = '<div data-testid="item">{{ item.name }}</div>'
 
@@ -17,11 +17,7 @@ async function mountScrolling(frames: FrameMock) {
     },
   })
 
-  setOffsetHeight(wrapper.get('.one-seamless-scroll__viewport').element, 100)
-  setOffsetHeight(wrapper.get('.one-seamless-scroll__group').element, 180)
-  wrapper.vm.sync()
-  await runScheduledMeasure(frames)
-  await nextTick()
+  await primeOverflow(wrapper, frames)
 
   return wrapper
 }

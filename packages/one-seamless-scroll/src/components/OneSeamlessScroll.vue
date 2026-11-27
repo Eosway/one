@@ -16,6 +16,7 @@ const props = withDefaults(defineProps<OneSeamlessScrollProps<T>>(), {
   hoverPause: true,
   enabled: true,
   paused: false,
+  pauseOnFocus: true,
 })
 const emit = defineEmits<{
   'state-change': [payload: OneSeamlessScrollStateChangeEvent]
@@ -27,6 +28,7 @@ defineSlots<{
 }>()
 
 const hovered = ref(false)
+const focusedWithin = ref(false)
 
 const rootRef = useTemplateRef<HTMLElement>('root')
 const viewportRef = useTemplateRef<HTMLElement>('viewport')
@@ -47,7 +49,7 @@ const normalizedSpeed = computed<number>(() => {
 
 const isEligibleByInput = computed(() => props.enabled && normalizedList.value.length >= normalizedMinItems.value)
 
-const isPausedByInteraction = computed(() => props.paused || (props.hoverPause && hovered.value))
+const isPausedByInteraction = computed(() => props.paused || focusedWithin.value || (props.hoverPause && hovered.value))
 const isLooping = computed(() => isEligibleByInput.value)
 const isScrolling = computed(() => isEligibleByInput.value && !isPausedByInteraction.value)
 const { hasOverflow, shouldDuplicate, sync } = useSeamlessMotion({
@@ -108,6 +110,34 @@ function handleMouseLeave(): void {
   }
 }
 
+function handleFocusIn(): void {
+  if (props.pauseOnFocus) {
+    focusedWithin.value = true
+  }
+}
+
+function handleFocusOut(event: FocusEvent): void {
+  if (!props.pauseOnFocus) {
+    return
+  }
+
+  const nextTarget = event.relatedTarget
+  if (nextTarget instanceof Node && rootRef.value?.contains(nextTarget)) {
+    return
+  }
+
+  focusedWithin.value = false
+}
+
+watch(
+  () => props.pauseOnFocus,
+  (enabled: boolean) => {
+    if (!enabled) {
+      focusedWithin.value = false
+    }
+  }
+)
+
 watch([normalizedList, () => normalizedList.value.length], () => {
   sync()
 })
@@ -118,7 +148,15 @@ defineExpose<OneSeamlessScrollExposed>({
 </script>
 
 <template>
-  <div ref="root" class="one-seamless-scroll" :style="LAYOUT_STYLES.root" :data-state="state" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
+  <div
+    ref="root"
+    class="one-seamless-scroll"
+    :style="LAYOUT_STYLES.root"
+    :data-state="state"
+    @mouseenter="handleMouseEnter"
+    @mouseleave="handleMouseLeave"
+    @focusin="handleFocusIn"
+    @focusout="handleFocusOut">
     <div v-if="state === 'empty'" class="one-seamless-scroll__empty" :style="LAYOUT_STYLES.empty">
       <slot name="empty" />
     </div>

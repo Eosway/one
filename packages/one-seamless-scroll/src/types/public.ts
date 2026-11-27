@@ -65,6 +65,13 @@ export interface OneSeamlessScrollProps<T = unknown> {
    * - 适用于 `KeepAlive` 页面 `onDeactivated` / `onActivated` 与业务临时暂停。
    */
   paused?: boolean
+  /**
+   * 焦点进入组件时是否自动暂停。默认 `true`。
+   *
+   * 根节点监听 `focusin` / `focusout`：焦点在组件内部移动不恢复，
+   * 只有焦点真正离开根节点且外部 `paused` 为 `false` 时才恢复滚动。
+   */
+  pauseOnFocus?: boolean
 }
 
 /**

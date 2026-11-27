@@ -1,3 +1,4 @@
+import type { VueWrapper } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { vi } from 'vitest'
 
@@ -55,5 +56,13 @@ export function installFrameMock(): FrameMock {
 
 export async function runScheduledMeasure(frames: FrameMock): Promise<void> {
   frames.runNextFrame(0)
+  await nextTick()
+}
+
+export async function primeOverflow(wrapper: VueWrapper, frames: FrameMock, viewportHeight = 100, contentHeight = 180): Promise<void> {
+  setOffsetHeight(wrapper.get('.one-seamless-scroll__viewport').element, viewportHeight)
+  setOffsetHeight(wrapper.get('.one-seamless-scroll__group').element, contentHeight)
+  wrapper.vm.sync()
+  await runScheduledMeasure(frames)
   await nextTick()
 }
