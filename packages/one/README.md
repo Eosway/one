@@ -9,6 +9,7 @@
 - `@eosway/one/chat` -> `@eosway/one-chat`
 - `@eosway/one/chart` -> `@eosway/one-chart`
 - `@eosway/one/chart/plugins` -> `@eosway/one-chart/plugins`
+- `@eosway/one/seamless-scroll` -> `@eosway/one-seamless-scroll`
 
 ## 安装
 
@@ -28,7 +29,7 @@ pnpm add echarts-stat
 根入口仅导出核心组件与 hook，不导出 plugins：
 
 ```ts
-import { OneChart, useOneChart, useOneChartRuntime, useChatStream } from '@eosway/one'
+import { OneChart, OneSeamlessScroll, useOneChart, useOneChartRuntime, useChatStream } from '@eosway/one'
 ```
 
 通过命名空间子路径访问具体组件包：
@@ -39,6 +40,10 @@ import { createOpenAICompatibleChatStream, useChatStream } from '@eosway/one/cha
 
 ```ts
 import OneChart, { useOneChart, useOneChartRuntime } from '@eosway/one/chart'
+```
+
+```ts
+import OneSeamlessScroll from '@eosway/one/seamless-scroll'
 ```
 
 插件子路径同样使用命名空间：
@@ -53,6 +58,7 @@ import { glPlugin, statPlugin } from '@eosway/one/chart/plugins'
 
 - `useChatStream`
 - `OneChart`
+- `OneSeamlessScroll`
 - `useOneChart`
 - `useOneChartRuntime`
 
