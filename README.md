@@ -8,11 +8,22 @@
 
 ## Packages 列表
 
-| 包名                | 版本                                                                                                                  | 目录                                         |
-| ------------------- | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| `@eosway/one-chat`  | 待发布                                                                                                                | [`packages/one-chat`](./packages/one-chat)   |
-| `@eosway/one`       | [![npm version](https://img.shields.io/npm/v/@eosway/one.svg)](https://www.npmjs.com/package/@eosway/one)             | [`packages/one`](./packages/one)             |
-| `@eosway/one-chart` | [![npm version](https://img.shields.io/npm/v/@eosway/one-chart.svg)](https://www.npmjs.com/package/@eosway/one-chart) | [`packages/one-chart`](./packages/one-chart) |
+| 包名                          | 版本                                                                                                                                      | 目录                                                             |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `@eosway/one-chat`            | 待发布                                                                                                                                    | [`packages/one-chat`](./packages/one-chat)                       |
+| `@eosway/one`                 | [![npm version](https://img.shields.io/npm/v/@eosway/one.svg)](https://www.npmjs.com/package/@eosway/one)                                 | [`packages/one`](./packages/one)                                 |
+| `@eosway/one-chart`           | [![npm version](https://img.shields.io/npm/v/@eosway/one-chart.svg)](https://www.npmjs.com/package/@eosway/one-chart)                     | [`packages/one-chart`](./packages/one-chart)                     |
+| `@eosway/one-seamless-scroll` | [![npm version](https://img.shields.io/npm/v/@eosway/one-seamless-scroll.svg)](https://www.npmjs.com/package/@eosway/one-seamless-scroll) | [`packages/one-seamless-scroll`](./packages/one-seamless-scroll) |
+
+### 命名空间映射
+
+| 子路径                        | 对应包                                                                           |
+| ----------------------------- | -------------------------------------------------------------------------------- |
+| `@eosway/one`                 | `@eosway/one-chart`、`@eosway/one-seamless-scroll`、`@eosway/one-chat`（仅类型） |
+| `@eosway/one/chat`            | `@eosway/one-chat`                                                               |
+| `@eosway/one/chart`           | `@eosway/one-chart`                                                              |
+| `@eosway/one/chart/plugins`   | `@eosway/one-chart/plugins`                                                      |
+| `@eosway/one/seamless-scroll` | `@eosway/one-seamless-scroll`                                                    |
 
 ## 开发环境
 
@@ -39,7 +50,4 @@ pnpm run clean
 
 - [`playground/one-chart`](./playground/one-chart)
 - [`playground/one-chat`](./playground/one-chat)
-
-## 设计文档
-
-- [Chat Architecture](./docs/chat-architecture.md)
+- [`playground/one-seamless-scroll`](./playground/one-seamless-scroll)
