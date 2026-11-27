@@ -51,8 +51,20 @@ export interface OneSeamlessScrollProps<T = unknown> {
   hoverPause?: boolean
   /**
    * 是否允许组件进入自动滚动。
+   *
+   * 注意：该属性会移除复制组并重置 `transform`，用于彻底关闭滚动能力；
+   * 临时暂停请使用 `paused`。
    */
   enabled?: boolean
+  /**
+   * 外部暂停开关。默认 `false`。
+   *
+   * - `true` 时仅暂停动画，不移除复制组、不重置 `transform`、不改变溢出判断。
+   * - 恢复后从当前位置继续滚动。
+   * - 与 `hoverPause` 相互独立，任一成立都会暂停；外部 `paused` 优先级最高。
+   * - 适用于 `KeepAlive` 页面 `onDeactivated` / `onActivated` 与业务临时暂停。
+   */
+  paused?: boolean
 }
 
 /**

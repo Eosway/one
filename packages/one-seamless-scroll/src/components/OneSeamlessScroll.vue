@@ -15,6 +15,7 @@ const props = withDefaults(defineProps<OneSeamlessScrollProps<T>>(), {
   speed: DEFAULT_SPEED,
   hoverPause: true,
   enabled: true,
+  paused: false,
 })
 const emit = defineEmits<{
   'state-change': [payload: OneSeamlessScrollStateChangeEvent]
@@ -46,8 +47,9 @@ const normalizedSpeed = computed<number>(() => {
 
 const isEligibleByInput = computed(() => props.enabled && normalizedList.value.length >= normalizedMinItems.value)
 
+const isPausedByInteraction = computed(() => props.paused || (props.hoverPause && hovered.value))
 const isLooping = computed(() => isEligibleByInput.value)
-const isScrolling = computed(() => isEligibleByInput.value && !(props.hoverPause && hovered.value))
+const isScrolling = computed(() => isEligibleByInput.value && !isPausedByInteraction.value)
 const { hasOverflow, shouldDuplicate, sync } = useSeamlessMotion({
   rootRef,
   viewportRef,
@@ -67,7 +69,7 @@ const state = computed<OneSeamlessScrollState>(() => {
     return 'static'
   }
 
-  if (props.hoverPause && hovered.value) {
+  if (isPausedByInteraction.value) {
     return 'paused'
   }
 
@@ -90,6 +92,15 @@ function handleMouseEnter(): void {
     hovered.value = true
   }
 }
+
+watch(
+  () => props.hoverPause,
+  (enabled: boolean) => {
+    if (!enabled) {
+      hovered.value = false
+    }
+  }
+)
 
 function handleMouseLeave(): void {
   if (props.hoverPause) {
