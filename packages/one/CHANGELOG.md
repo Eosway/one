@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.4.1](https://github.com/Eosway/one/compare/one@0.4.0...one@0.4.1) (2026-11-27)
+
+### Bug Fixes
+
+- re-export seamless scroll item slot props ([3f377d7](https://github.com/Eosway/one/commit/3f377d77453e797e2daa44e4c1113a5900f84568))
+
+### Documentation
+
+- complete export matrix and dependency requirements ([a589a3f](https://github.com/Eosway/one/commit/a589a3f1b127e035325e863d8b7e3d44ed54fb35))
+- document seamless scroll entry ([16533bb](https://github.com/Eosway/one/commit/16533bbc8419ec685db260276f72ba6606cc7e74))
+
 ## [0.4.0](https://github.com/Eosway/one/compare/one@0.3.0...one@0.4.0) (2026-06-23)
 
 ### Miscellaneous Chores
